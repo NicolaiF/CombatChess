@@ -1,3 +1,4 @@
 # CombatChess
 The greatest game of chess ever made
-fuck
+## 
+This is a cool game, pls enjoy
