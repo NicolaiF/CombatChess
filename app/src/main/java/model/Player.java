@@ -1,18 +1,18 @@
-package Model;
+package model;
 
-import Interfaces.Player;
-import Interfaces.PowerUp;
+import interfaces.PowerUp;
+import model.pieces.ChessPiece;
 
 import java.util.ArrayList;
 
-public class ChessPlayer implements Player {
+public class Player {
 
     private String ID;
     private ArrayList<ChessPiece> pieces;
     private ArrayList<PowerUp> powerUps;
     private int time;
 
-    public ChessPlayer(String ID){
+    public Player(String ID){
         this.ID = ID;
         pieces = new ArrayList<>();
         powerUps = new ArrayList<>();
@@ -21,47 +21,41 @@ public class ChessPlayer implements Player {
 
     }
 
-    /** Gives the player the first 16 pieces when starting a new game
+    /** Gives the player the first 16 pieces when starting a new game. Row 0-1 is black, Row 6-7 is white
      * @param officerRow The officer row
      * @param pawnRow The pawn row
      */
-    public void giveStartingPieces(ArrayList<Square> officerRow, ArrayList<Square> pawnRow) {
-        for(Square square : officerRow){
-            addPiece(square.getPiece());
+    public void giveStartingPieces(Tile[] officerRow, Tile[] pawnRow) {
+        for(Tile tile : officerRow){
+            addPiece(tile.getPiece());
         }
 
-        for(Square square : pawnRow){
-            addPiece(square.getPiece());
+        for(Tile tile : pawnRow){
+            addPiece(tile.getPiece());
         }
     }
 
-    @Override
     public void addPiece(ChessPiece chessPiece) {
         pieces.add(chessPiece);
     }
 
-    @Override
     public void removePiece(ChessPiece chessPiece) {
         pieces.remove(chessPiece);
     }
 
-    @Override
     public boolean ownsPiece(ChessPiece chessPiece) {
         return pieces.contains(chessPiece);
     }
 
-    @Override
     public void addPowerUp(PowerUp powerUp) {
         powerUps.add(powerUp);
     }
 
-    @Override
     public void usePowerUp(String powerUpName) {
         /* TODO: Find a way to identify the power up in the power up list. Then use powerUp.activatePowerUp().
         Finally call removePowerUp() to remove it from the players available power ups */
     }
 
-    @Override
     public void removePowerUp(PowerUp powerUp) {
         powerUps.remove(powerUp);
     }
@@ -70,22 +64,18 @@ public class ChessPlayer implements Player {
         this.time = time;
     }
 
-    @Override
     public void increaseTime(int time) {
         this.time += time;
     }
 
-    @Override
     public void decreaseTime(int time) {
         this.time -= time;
     }
 
-    @Override
     public ArrayList<ChessPiece> getPieces() {
         return pieces;
     }
 
-    @Override
     public int getTime() {
         return time;
     }
