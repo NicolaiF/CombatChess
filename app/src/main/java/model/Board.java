@@ -1,8 +1,8 @@
 package model;
 
-import android.widget.ImageView;
 import interfaces.*;
 import model.pieces.ChessPiece;
+import model.pieces.Pawn;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -15,11 +15,17 @@ public class Board {
     private AbstractPieceFactory pieceFactory = new ClassicPieceFactory();
     private Map<String, String> positionToIntsDictionary = new HashMap<>();
     private Map<String, String> intsToPositionDictionary = new HashMap<>();
+    private String posWhiteKing;
+    private String posBlackKing;
 
     public Board(){
         // Initializing the colors for the board to be black and white
         colors[0] = "#000000";
         colors[1] = "#FFFFFF";
+
+        // Starting position for kings
+        posBlackKing = "E8";
+        posWhiteKing = "E1";
 
         generateBoard();
         placeStartingPieces();
@@ -126,8 +132,8 @@ public class Board {
      */
     public ArrayList<String> getLegalMoves(String pos) {
         ArrayList<String> legalMoves = new ArrayList<>();
-
         int[] index = convertPosToInts(pos);
+
         int row = index[0];
         int column = index[1];
 
@@ -137,23 +143,78 @@ public class Board {
         for(Move move : moves){
             int rowOffset = move.getRowOffset();
             int columnOffset = move.getColumnOffset();
+            row = index[0];
+            column = index[1];
+
             boolean continuous = move.isContinuous();
 
             if(continuous){
-                //TODO: fix
+                Tile tile = getTile(row+rowOffset, column+columnOffset);
+
+                while(true){
+                    // Checking if this tile exists
+                    if(tile != null){
+                        // Checking if this tile contains a piece
+                        if(tile.hasPiece()){
+                            // Checking if this piece is an allied piece
+                            if(tile.getPiece().getColor().equals(chessPiece.getColor())){
+                                break;
+                            } else {
+                                // TODO: This move has to be simulated in some way to check if the new state is a legal state
+                                legalMoves.add(intsToPositionDictionary.get(Integer.toString(row+rowOffset )+ "," + Integer.toString(column+columnOffset)));
+                                break;
+                            }
+                        } else {
+                            legalMoves.add(intsToPositionDictionary.get(Integer.toString(row+rowOffset )+ "," + Integer.toString(column+columnOffset)));
+                            // Updating variables for next iteration
+                            row += rowOffset;
+                            column += columnOffset;
+                            tile = getTile(row+rowOffset, column+columnOffset);
+                        }
+                    } else {
+                        break;
+                    }
+                }
             } else {
                 Tile tile = getTile(row+rowOffset, column+columnOffset);
-                // Checking if this tile is non existing or this contains an allied piece
-                if(tile == null || tile.hasPiece() && tile.getPiece().getColor().equals(chessPiece.getColor())){
-                    break;
+                // Checking if this tile exists
+                if(tile != null){
+                    // Checking if this tile contains a piece that is not an ally
+                    if(tile.hasPiece()){
+                        // Checking if this piece is an enemy piece
+                        if(!tile.getPiece().getColor().equals(chessPiece.getColor())){
+                            if(!(chessPiece instanceof Pawn)){
+                                legalMoves.add(intsToPositionDictionary.get(Integer.toString(row+rowOffset )+ "," + Integer.toString(column+columnOffset)));
+                            }
+                        }
+                    } else {
+                        legalMoves.add(intsToPositionDictionary.get(Integer.toString(row+rowOffset )+ "," + Integer.toString(column+columnOffset)));
+                    }
                 }
-                else{
-                    legalMoves.add(intsToPositionDictionary.get(Integer.toString(row+rowOffset )+ "," + Integer.toString(column+columnOffset)));
-                }
+            }
+        }
 
+        // Special case for capturing moves
+        moves = chessPiece.getCaptureMoves();
+        for (Move move : moves) {
+            int rowOffset = move.getRowOffset();
+            int columnOffset = move.getColumnOffset();
+            Tile tile = getTile(row + rowOffset, column + columnOffset);
+            // Checking if this tile exists and contains enemy piece
+            if (tile != null && tile.hasPiece() && !tile.getPiece().getColor().equals(chessPiece.getColor())) {
+                legalMoves.add(intsToPositionDictionary.get(Integer.toString(row + rowOffset) + "," + Integer.toString(column + columnOffset)));
             }
         }
         return legalMoves;
+    }
+
+    /** Checking if this tile is under attack by an enemy piece
+     * @param kingPos position of the king
+     * @return true if attacked, else false
+     */
+    private boolean isKingAttacked(String kingPos){
+        // TODO: check if king is under attack
+        return false;
     }
 
     /**

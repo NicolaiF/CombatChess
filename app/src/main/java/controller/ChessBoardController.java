@@ -24,16 +24,21 @@ public class ChessBoardController {
      * @return true if the piece was moved, else false
      */
     public boolean movePiece(Player player, String oldPos, String newPos){
-        //TODO: Only a simple test
-        ChessPiece chessPiece = board.getTile(oldPos).removePiece();
-        board.getTile(newPos).setPiece(chessPiece);
+        // Checks if the players owns this piece, and that it's a legal move
+        if(player.ownsPiece(board.getTile(oldPos).getPiece())){
+            if(board.getLegalMoves(oldPos).contains(newPos)){
+                ChessPiece chessPiece = board.getTile(oldPos).removePiece();
+                board.getTile(newPos).setPiece(chessPiece);
 
-        if(chessPiece instanceof Pawn){
-            Pawn pawn = (Pawn) chessPiece;
-            pawn.moved();
+                if(chessPiece instanceof Pawn){
+                    Pawn pawn = (Pawn) chessPiece;
+                    pawn.moved();
+                }
+
+                return true;
+            }
         }
-
-        return true;
+        return false;
     }
 
     /**

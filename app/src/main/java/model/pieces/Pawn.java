@@ -5,9 +5,6 @@ import model.Move;
 import java.util.ArrayList;
 
 public class Pawn extends ChessPiece {
-
-    private ArrayList<Move> captureMoves = new ArrayList<>();
-
     /**
      * @param style reference to image resource for this piece
      * @param color black or white
@@ -32,9 +29,5 @@ public class Pawn extends ChessPiece {
     public void moved(){
         // Removing possibility to move two steps forward
         legalMoves.remove(1);
-    }
-
-    public ArrayList<Move> getCaptureMoves() {
-        return captureMoves;
     }
 }

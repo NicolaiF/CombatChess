@@ -11,6 +11,7 @@ public abstract class ChessPiece implements Piece {
     private boolean isAlive = true;
     private String color;
     protected ArrayList<Move> legalMoves = new ArrayList<>();
+    protected ArrayList<Move> captureMoves = new ArrayList<>();
     private String type;
 
     /**
@@ -53,6 +54,10 @@ public abstract class ChessPiece implements Piece {
 
     @Override
     public void setStyle(String style) {this.style = style;}
+
+    public ArrayList<Move> getCaptureMoves() {
+        return captureMoves;
+    }
 
     @Override
     public String toString(){
