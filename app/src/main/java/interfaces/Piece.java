@@ -9,7 +9,6 @@ public interface Piece {
     String getStyle();
     String getColor();
     ArrayList<Move> getLegalMoves();
-    ArrayList<Move> getCaptureMoves();
     boolean isAlive();
     void setStyle(String style);
 }

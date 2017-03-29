@@ -18,19 +18,22 @@ public class Tile {
         this.color = color;
     }
 
-    /**
-     * Sets a ChessPiece for this Tile
-     * @param chessPiece The new chess piece for this tile
+    /** Removes the piece in this tile
+     * @return the piece that was removed
      */
-    public void setPiece(ChessPiece chessPiece) {
-        this.chessPiece = chessPiece;
+    public ChessPiece removePiece(){
+        ChessPiece chessPiece = this.chessPiece;
+        this.chessPiece = null;
+        return chessPiece;
     }
 
-    /** Sets a PowerUp for this tile
-     * @param powerUp The new power up for this tile
+    /** Removes the power up in this tile
+     * @return the powerUp that was removed
      */
-    public void setPowerUp(PowerUp powerUp) {
-        this.powerUp = powerUp;
+    public PowerUp removePowerUp(){
+        PowerUp powerUp = this.powerUp;
+        this.powerUp = null;
+        return powerUp;
     }
 
     public String getColor() {
@@ -41,8 +44,23 @@ public class Tile {
         return chessPiece;
     }
 
+    /**
+     * Sets a ChessPiece for this Tile
+     * @param chessPiece The new chess piece for this tile
+     */
+    public void setPiece(ChessPiece chessPiece) {
+        this.chessPiece = chessPiece;
+    }
+
     public PowerUp getPowerUp() {
         return powerUp;
+    }
+
+    /** Sets a PowerUp for this tile
+     * @param powerUp The new power up for this tile
+     */
+    public void setPowerUp(PowerUp powerUp) {
+        this.powerUp = powerUp;
     }
 
     @Override
@@ -51,5 +69,9 @@ public class Tile {
             return chessPiece.toString();
         }
         return color;
+    }
+
+    public boolean hasPiece() {
+        return chessPiece != null;
     }
 }

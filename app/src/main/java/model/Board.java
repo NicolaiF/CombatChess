@@ -1,5 +1,6 @@
 package model;
 
+import android.widget.ImageView;
 import interfaces.*;
 import model.pieces.ChessPiece;
 
@@ -12,7 +13,8 @@ public class Board {
     private Tile[][] board = new Tile[8][8];
     private String[] colors = new String[2];
     private AbstractPieceFactory pieceFactory = new ClassicPieceFactory();
-    private Map<String, String> positionDictionary = new HashMap<>();
+    private Map<String, String> positionToIntsDictionary = new HashMap<>();
+    private Map<String, String> intsToPositionDictionary = new HashMap<>();
 
     public Board(){
         // Initializing the colors for the board to be black and white
@@ -21,7 +23,19 @@ public class Board {
 
         generateBoard();
         placeStartingPieces();
-        generatePositionDictionary();
+        generatePositionToIntsDictionary();
+        generateIntsToPositionDictionary();
+    }
+
+    /**
+     * Generates a dictionary that converts indexes to a textual representation
+     */
+    private void generateIntsToPositionDictionary() {
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                intsToPositionDictionary.put(i + "," + j, String.valueOf(Character.toChars(65+j)) + Integer.toString(8-i));
+            }
+        }
     }
 
     private void placeStartingPieces() {
@@ -61,28 +75,18 @@ public class Board {
     /**
      * Generates a dictionary that converts a textual position to indexes in board
      */
-    private void generatePositionDictionary() {
-        for(int i = 0; i<8; i++){
+    private void generatePositionToIntsDictionary() {
+        for(int row = 0; row<8; row++){
             for(char c : "ABCDEFGH".toCharArray()){
-                switch (c){
-                    case 'A': positionDictionary.put("A" + Integer.toString(8-i),Integer.toString(i) + "," + "0");
-                    case 'B': positionDictionary.put("B" + Integer.toString(8-i),Integer.toString(i) + "," + "1");
-                    case 'C': positionDictionary.put("C" + Integer.toString(8-i),Integer.toString(i) + "," + "2");
-                    case 'D': positionDictionary.put("D" + Integer.toString(8-i),Integer.toString(i) + "," + "3");
-                    case 'E': positionDictionary.put("E" + Integer.toString(8-i),Integer.toString(i) + "," + "4");
-                    case 'F': positionDictionary.put("F" + Integer.toString(8-i),Integer.toString(i) + "," + "5");
-                    case 'G': positionDictionary.put("G" + Integer.toString(8-i),Integer.toString(i) + "," + "6");
-                    case 'H': positionDictionary.put("H" + Integer.toString(8-i),Integer.toString(i) + "," + "7");
-                }
+                positionToIntsDictionary.put(c + Integer.toString(8-row),row + "," + ((int) c - 65));
             }
         }
-
     }
 
     /**
      * Generates a new Chess board with Tiles
      */
-    public void generateBoard() {
+    private void generateBoard() {
         for(int i = 0; i<8; i++){
             for(int j = 0; j<8; j++){
                 board[i][j] = new Tile(insertColor(i,j));
@@ -116,18 +120,40 @@ public class Board {
         return getTile(pos).getPowerUp() != null;
     }
 
-    public ArrayList<String> getLegalMoves(String pos) {
-        return null;
-    }
-
-    /** Calculates all legal moves for a specific chess piece in a specific position
-     * @param chessPiece
-     * @param row The row of this chess piece. row = 0 is 8 row in the graphical chess board. row = 7 is 1 in the graphical
-     * @param column The column of this chess piece. column = 0 is A row in the graphical chess board. column = 7 is H in the graphical
-     * @return A list of legal moves
+    /** Finds all legal moves for the piece in this position
+     * @param pos textual position on the board
+     * @return A list of legal moves for this piece
      */
-    private ArrayList<String> calculateLegalMoves(ChessPiece chessPiece, int row, int column) {
-        return null;
+    public ArrayList<String> getLegalMoves(String pos) {
+        ArrayList<String> legalMoves = new ArrayList<>();
+
+        int[] index = convertPosToInts(pos);
+        int row = index[0];
+        int column = index[1];
+
+        ChessPiece chessPiece = getTile(pos).getPiece();
+        ArrayList<Move> moves = chessPiece.getLegalMoves();
+
+        for(Move move : moves){
+            int rowOffset = move.getRowOffset();
+            int columnOffset = move.getColumnOffset();
+            boolean continuous = move.isContinuous();
+
+            if(continuous){
+                //TODO: fix
+            } else {
+                Tile tile = getTile(row+rowOffset, column+columnOffset);
+                // Checking if this tile is non existing or this contains an allied piece
+                if(tile == null || tile.hasPiece() && tile.getPiece().getColor().equals(chessPiece.getColor())){
+                    break;
+                }
+                else{
+                    legalMoves.add(intsToPositionDictionary.get(Integer.toString(row+rowOffset )+ "," + Integer.toString(column+columnOffset)));
+                }
+
+            }
+        }
+        return legalMoves;
     }
 
     /**
@@ -149,8 +175,25 @@ public class Board {
         colors[1] = secondColor;
     }
 
+    /**
+     * @param pos textual position in the board
+     * @return the tile in this pos, null if none
+     */
     public Tile getTile(String pos) {
-        return null;
+        int[] index = convertPosToInts(pos);
+        return board[index[0]][index[1]];
+    }
+
+    /**
+     * @param row vertical index in board
+     * @param column horizontal index in board
+     * @return the tile in this pos, null if none
+     */
+    private Tile getTile(int row, int column){
+        if(row < 0 || row > 7 || column < 0 || column > 7){
+            return null;
+        }
+        return board[row][column];
     }
 
     public Tile[][] getBoard(){
@@ -161,8 +204,14 @@ public class Board {
      * @param pos A textual position in the chess board, i.e A8, A7, etc.
      * @return An integer array with indexes to the board
      */
-    public int[] convertPosToInts(String pos){
-        String value = positionDictionary.get(pos);
+    private int[] convertPosToInts(String pos){
+        String value = positionToIntsDictionary.get(pos);
+
+        // Returns null if this pos is not in the board
+        if(value == null){
+            return null;
+        }
+
         int[] positions = new int[2];
 
         positions[0] = Integer.valueOf(value.split(",")[0]);
@@ -171,37 +220,9 @@ public class Board {
         return positions;
     }
 
-    /** Converts indexes to textual position
-     * @param row
-     * @param column
-     * @return return textual position
-     */
-    public String convertIndexToPos(int row, int column){
-        switch (column){
-            case 0: return "A" + Integer.toString(8-row);
-            case 1: return "B" + Integer.toString(8-row);
-            case 2: return "C" + Integer.toString(8-row);
-            case 3: return "D" + Integer.toString(8-row);
-            case 4: return "E" + Integer.toString(8-row);
-            case 5: return "F" + Integer.toString(8-row);
-            case 6: return "G" + Integer.toString(8-row);
-            case 7: return "H" + Integer.toString(8-row);
-        }
-        return "";
-    }
-
-    /** Returns the chess piece on this position
-     * @param row The row in the board
-     * @param column The column in the board
-     * @return The chess piece on this position, null if none
-     */
-    public ChessPiece getPiece(int row, int column) {
-        return null;
-    }
-
     @Override
     public String toString() {
-        String string = "";
+        String string = "\n";
         for(int i=0; i<8; i++){
             for(int j=0; j<8; j++){
                 string += board[i][j].toString() + "\t";

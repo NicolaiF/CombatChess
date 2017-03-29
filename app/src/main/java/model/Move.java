@@ -16,4 +16,16 @@ public class Move {
         this.columnOffset = columnOffset;
         this.continuous = continuous;
     }
+
+    public int getRowOffset() {
+        return rowOffset;
+    }
+
+    public int getColumnOffset() {
+        return columnOffset;
+    }
+
+    public boolean isContinuous() {
+        return continuous;
+    }
 }

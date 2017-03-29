@@ -3,11 +3,13 @@ package controller;
 import model.Board;
 import model.pieces.ChessPiece;
 import model.Player;
+import model.pieces.Pawn;
+
 import java.util.ArrayList;
 
 public class ChessBoardController {
 
-    Board board;
+    private Board board;
 
     /**
      * @param board Reference to the chess board
@@ -17,13 +19,21 @@ public class ChessBoardController {
     }
 
     /**
-     * @param player The player trying to move a piece
-     * @param chessPiece The chess piece to be moved
-     * @param newPos The new position for this chessPiece
+     * @param oldPos The old position for the chess piece
+     * @param newPos The new position for this chess piece
      * @return true if the piece was moved, else false
      */
-    public boolean movePiece(Player player, ChessPiece chessPiece, String newPos){
-        return false;
+    public boolean movePiece(Player player, String oldPos, String newPos){
+        //TODO: Only a simple test
+        ChessPiece chessPiece = board.getTile(oldPos).removePiece();
+        board.getTile(newPos).setPiece(chessPiece);
+
+        if(chessPiece instanceof Pawn){
+            Pawn pawn = (Pawn) chessPiece;
+            pawn.moved();
+        }
+
+        return true;
     }
 
     /**
@@ -32,9 +42,9 @@ public class ChessBoardController {
      */
     public void showLegalMoves(String pos, Player player){
         // Showing legal moves if player owns this chess piece
-        if(player.ownsPiece((ChessPiece) board.getTile(pos).getPiece())){
+        if(player.ownsPiece(board.getTile(pos).getPiece())){
             ArrayList<String> legalMoves = board.getLegalMoves(pos);
-            System.out.println(legalMoves);
+            System.out.println("Legal moves for " + board.getTile(pos).getPiece() + " at " + pos + " :" + legalMoves);
         }
 
     }

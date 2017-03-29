@@ -16,9 +16,6 @@ public class Player {
         this.ID = ID;
         pieces = new ArrayList<>();
         powerUps = new ArrayList<>();
-
-        // Give this player the first 16 pieces
-
     }
 
     /** Gives the player the first 16 pieces when starting a new game. Row 0-1 is black, Row 6-7 is white
@@ -60,10 +57,6 @@ public class Player {
         powerUps.remove(powerUp);
     }
 
-    public void setTime(int time){
-        this.time = time;
-    }
-
     public void increaseTime(int time) {
         this.time += time;
     }
@@ -78,6 +71,10 @@ public class Player {
 
     public int getTime() {
         return time;
+    }
+
+    public void setTime(int time){
+        this.time = time;
     }
 
     public String getID() {

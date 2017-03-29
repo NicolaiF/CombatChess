@@ -9,10 +9,8 @@ public abstract class ChessPiece implements Piece {
 
     private String style;
     private boolean isAlive = true;
-    private boolean isMoved = false;
     private String color;
     protected ArrayList<Move> legalMoves = new ArrayList<>();
-    protected ArrayList<Move> captureMoves = new ArrayList<>();
     private String type;
 
     /**
@@ -26,11 +24,7 @@ public abstract class ChessPiece implements Piece {
         this.color = color;
     }
 
-    public void moved(){isMoved = true; }
-
     public void killed(){ isAlive = false; }
-
-    public boolean isMoved(){return isAlive; }
 
     @Override
     public String getStyle() {
@@ -45,11 +39,6 @@ public abstract class ChessPiece implements Piece {
     @Override
     public ArrayList<Move> getLegalMoves() {
         return legalMoves;
-    }
-
-    @Override
-    public ArrayList<Move> getCaptureMoves() {
-        return captureMoves;
     }
 
     @Override
