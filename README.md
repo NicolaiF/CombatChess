@@ -1,6 +1,8 @@
 # CombatChess
 The greatest game of chess ever made
 ## 
+åpne Index.html i doc-mappe for sheep dokumentasjon
+##
 For å sette opp prosjektet i IntelliJ.
 
 1. File -> Project From Existing Sources
