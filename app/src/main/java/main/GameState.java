@@ -2,14 +2,10 @@ package main;
 
 import sheep.game.Sprite;
 import sheep.game.State;
-import sheep.game.World;
 
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.view.MotionEvent;
 import sheep.graphics.Image;
-import sheep.input.TouchListener;
-import sheep.math.Vector2;
 
 public class GameState extends State {
 
@@ -24,7 +20,6 @@ public class GameState extends State {
         //pawnSprite.setScale(0.5f, 0.5f);
         pawnSprite.setPosition(0, 0);
 
-
     }
 
     public void draw(Canvas canvas){
@@ -36,7 +31,8 @@ public class GameState extends State {
         pawnSprite.setPosition(pawnSprite.getX()+1, pawnSprite.getY()+1);
         pawnSprite.update(dt);
     }
-    /*
+
+    /* May be useful methods
     public static int getScreenWidth() {
         return Resources.getSystem().getDisplayMetrics().widthPixels;
     }
