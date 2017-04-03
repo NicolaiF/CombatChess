@@ -51,6 +51,5 @@ public class ChessBoardController {
             ArrayList<String> legalMoves = board.getLegalMoves(pos);
             System.out.println("Legal moves for " + board.getTile(pos).getPiece() + " at " + pos + " :" + legalMoves);
         }
-
     }
 }
