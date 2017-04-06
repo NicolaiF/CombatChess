@@ -1,6 +1,7 @@
 package controller;
 
 import model.Board;
+import model.Tile;
 import model.pieces.ChessPiece;
 import model.Player;
 import model.pieces.Pawn;
@@ -11,9 +12,6 @@ public class ChessBoardController {
 
     private Board board;
 
-    /**
-     * @param board Reference to the chess board
-     */
     public ChessBoardController(Board board){
         this.board = board;
     }
@@ -51,5 +49,9 @@ public class ChessBoardController {
             ArrayList<String> legalMoves = board.getLegalMoves(pos);
             System.out.println("Legal moves for " + board.getTile(pos).getPiece() + " at " + pos + " :" + legalMoves);
         }
+    }
+
+    public Tile[][] getTiles(){
+        return board.getTiles();
     }
 }

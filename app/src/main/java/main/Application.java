@@ -1,19 +1,28 @@
 package main;
 
+import android.app.Activity;
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import sheep.game.Game;
 
-public class MainActivity extends AppCompatActivity {
+import controller.ChessBoardController;
+import model.Board;
+import sheep.game.Game;
+import view.GameState;
+
+public class Application extends Activity {
     private Game game;
+    private Board board;
+    private ChessBoardController controller;
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
 
         game = new Game(this, null);
-        game.pushState(new GameState());
+        board = new Board();
+        controller = new ChessBoardController(board);
+
+        game.pushState(new GameState(game, controller));
 
         setContentView(game);
     }

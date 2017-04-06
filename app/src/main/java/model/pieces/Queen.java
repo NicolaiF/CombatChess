@@ -2,6 +2,7 @@ package model.pieces;
 
 import java.util.ArrayList;
 import model.Move;
+import sheep.game.Sprite;
 
 public class Queen extends ChessPiece {
 
@@ -9,11 +10,11 @@ public class Queen extends ChessPiece {
     private ArrayList<Move> captureMoves = new ArrayList<>();
 
     /**
-     * @param style reference to image resource for this piece
+     * @param sprite visual representation of the piece
      * @param isWhite piece is either white or black
      */
-    public Queen(String style, boolean isWhite) {
-        super(style, "Queen", isWhite);
+    public Queen(Sprite sprite, boolean isWhite) {
+        super(sprite, "Queen", isWhite);
 
         legalMoves.add(new Move(-1,-1, true));
         legalMoves.add(new Move(-1,0, true));

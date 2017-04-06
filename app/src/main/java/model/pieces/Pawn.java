@@ -1,6 +1,7 @@
 package model.pieces;
 
 import model.Move;
+import sheep.game.Sprite;
 
 import java.util.ArrayList;
 
@@ -10,11 +11,11 @@ public class Pawn extends ChessPiece {
     private ArrayList<Move> captureMoves = new ArrayList<>();
 
     /**
-     * @param style reference to image resource for this piece
+     * @param sprite visual representation of the piece
      * @param isWhite piece is either white or black
      */
-    public Pawn(String style, boolean isWhite) {
-        super(style, "Pawn", isWhite);
+    public Pawn(Sprite sprite, boolean isWhite) {
+        super(sprite, "Pawn", isWhite);
 
         if(isWhite){
             legalMoves.add(new Move(-1, 0, false));

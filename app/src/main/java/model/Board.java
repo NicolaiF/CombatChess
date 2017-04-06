@@ -4,6 +4,8 @@ import interfaces.*;
 import model.pieces.ChessPiece;
 import model.pieces.King;
 import model.pieces.Pawn;
+import sheep.game.Sprite;
+import sheep.graphics.Image;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -18,6 +20,7 @@ public class Board {
     private Map<String, String> intsToPositionDictionary = new HashMap<>();
     private String posWhiteKing;
     private String posBlackKing;
+    private Sprite sprite;
 
     public Board(){
         // Initializing the colors for the board to be black and white
@@ -419,7 +422,7 @@ public class Board {
     /**
      * @return the board
      */
-    public Tile[][] getBoard(){
+    public Tile[][] getTiles(){
         return  board;
     }
 
@@ -450,6 +453,14 @@ public class Board {
      */
     private String convertIntsToPos(int newRow, int newColumn) {
         return intsToPositionDictionary.get(newRow + "," + newColumn);
+    }
+
+    public Sprite getSprite() {
+        return sprite;
+    }
+
+    public void setSprite(Sprite sprite) {
+        this.sprite = sprite;
     }
 
     @Override

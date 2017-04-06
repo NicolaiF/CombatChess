@@ -2,23 +2,24 @@ package model.pieces;
 
 import interfaces.Piece;
 import model.Move;
+import sheep.game.Sprite;
 
 import java.util.ArrayList;
 
 public abstract class ChessPiece implements Piece {
 
-    private String style;
+    private Sprite sprite;
     private boolean isAlive = true;
     private String color;
     private String type;
 
     /**
-     * @param style reference to image resource for this piece
+     * @param sprite visual representation of the piece
      * @param type name for this piece
      * @param isWhite piece is either white or black
      */
-    public ChessPiece(String style, String type, boolean isWhite){
-        this.style = style;
+    public ChessPiece(Sprite sprite, String type, boolean isWhite){
+        this.sprite = sprite;
         this.type = type;
 
         if(isWhite){
@@ -31,8 +32,8 @@ public abstract class ChessPiece implements Piece {
     public void killed(){ isAlive = false; }
 
     @Override
-    public String getStyle() {
-        return style;
+    public Sprite getSprite() {
+        return sprite;
     }
 
     @Override
@@ -57,7 +58,7 @@ public abstract class ChessPiece implements Piece {
     }
 
     @Override
-    public void setStyle(String style) {this.style = style;}
+    public void setStyle(Sprite sprite) {this.sprite = sprite;}
 
     @Override
     public String toString(){

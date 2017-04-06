@@ -3,6 +3,7 @@ package model.pieces;
 import java.util.ArrayList;
 
 import model.Move;
+import sheep.game.Sprite;
 
 public class King extends ChessPiece {
 
@@ -10,11 +11,11 @@ public class King extends ChessPiece {
     private ArrayList<Move> captureMoves = new ArrayList<>();
 
     /**
-     * @param style reference to image resource for this piece
+     * @param sprite visual representation of the piece
      * @param isWhite piece is either white or black
      */
-    public King(String style, boolean isWhite) {
-        super(style, "King", isWhite);
+    public King(Sprite sprite, boolean isWhite) {
+        super(sprite, "King", isWhite);
 
         legalMoves.add(new Move(-1,-1, false));
         legalMoves.add(new Move(-1,0, false));
