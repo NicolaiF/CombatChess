@@ -10,19 +10,22 @@ public abstract class ChessPiece implements Piece {
     private String style;
     private boolean isAlive = true;
     private String color;
-    protected ArrayList<Move> legalMoves = new ArrayList<>();
-    protected ArrayList<Move> captureMoves = new ArrayList<>();
     private String type;
 
     /**
      * @param style reference to image resource for this piece
      * @param type name for this piece
-     * @param color black or white
+     * @param isWhite piece is either white or black
      */
-    public ChessPiece(String style, String type, String color){
+    public ChessPiece(String style, String type, boolean isWhite){
         this.style = style;
         this.type = type;
-        this.color = color;
+
+        if(isWhite){
+            color = "white";
+        } else {
+            color = "black";
+        }
     }
 
     public void killed(){ isAlive = false; }
@@ -38,9 +41,10 @@ public abstract class ChessPiece implements Piece {
     }
 
     @Override
-    public ArrayList<Move> getLegalMoves() {
-        return legalMoves;
-    }
+    public abstract ArrayList<Move> getLegalMoves();
+
+    @Override
+    public abstract ArrayList<Move> getCaptureMoves();
 
     @Override
     public String getType() {
@@ -54,10 +58,6 @@ public abstract class ChessPiece implements Piece {
 
     @Override
     public void setStyle(String style) {this.style = style;}
-
-    public ArrayList<Move> getCaptureMoves() {
-        return captureMoves;
-    }
 
     @Override
     public String toString(){

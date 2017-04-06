@@ -51,35 +51,35 @@ public class Board {
     private void placeStartingPieces() {
         // Adding pawns
         for(int i=0; i<8; i++){
-            board[1][i].setPiece((ChessPiece) pieceFactory.createPawn("black"));
-            board[6][i].setPiece((ChessPiece) pieceFactory.createPawn("white"));
+            board[1][i].setPiece((ChessPiece) pieceFactory.createPawn(false));
+            board[6][i].setPiece((ChessPiece) pieceFactory.createPawn(true));
         }
 
         // Adding rooks
-        board[0][0].setPiece((ChessPiece) pieceFactory.createRook("black"));
-        board[0][7].setPiece((ChessPiece) pieceFactory.createRook("black"));
-        board[7][0].setPiece((ChessPiece) pieceFactory.createRook("white"));
-        board[7][7].setPiece((ChessPiece) pieceFactory.createRook("white"));
+        board[0][0].setPiece((ChessPiece) pieceFactory.createRook(false));
+        board[0][7].setPiece((ChessPiece) pieceFactory.createRook(false));
+        board[7][0].setPiece((ChessPiece) pieceFactory.createRook(true));
+        board[7][7].setPiece((ChessPiece) pieceFactory.createRook(true));
 
         // Adding knights
-        board[0][1].setPiece((ChessPiece) pieceFactory.createKnight("black"));
-        board[0][6].setPiece((ChessPiece) pieceFactory.createKnight("black"));
-        board[7][1].setPiece((ChessPiece) pieceFactory.createKnight("white"));
-        board[7][6].setPiece((ChessPiece) pieceFactory.createKnight("white"));
+        board[0][1].setPiece((ChessPiece) pieceFactory.createKnight(false));
+        board[0][6].setPiece((ChessPiece) pieceFactory.createKnight(false));
+        board[7][1].setPiece((ChessPiece) pieceFactory.createKnight(true));
+        board[7][6].setPiece((ChessPiece) pieceFactory.createKnight(true));
 
         // Adding bishops
-        board[0][2].setPiece((ChessPiece) pieceFactory.createBishop("black"));
-        board[0][5].setPiece((ChessPiece) pieceFactory.createBishop("black"));
-        board[7][2].setPiece((ChessPiece) pieceFactory.createBishop("white"));
-        board[7][5].setPiece((ChessPiece) pieceFactory.createBishop("white"));
+        board[0][2].setPiece((ChessPiece) pieceFactory.createBishop(false));
+        board[0][5].setPiece((ChessPiece) pieceFactory.createBishop(false));
+        board[7][2].setPiece((ChessPiece) pieceFactory.createBishop(true));
+        board[7][5].setPiece((ChessPiece) pieceFactory.createBishop(true));
 
         // Adding queens
-        board[0][3].setPiece((ChessPiece) pieceFactory.createQueen("black"));
-        board[7][3].setPiece((ChessPiece) pieceFactory.createQueen("white"));
+        board[0][3].setPiece((ChessPiece) pieceFactory.createQueen(false));
+        board[7][3].setPiece((ChessPiece) pieceFactory.createQueen(true));
 
         // Adding kings
-        board[0][4].setPiece((ChessPiece) pieceFactory.createKing("black"));
-        board[7][4].setPiece((ChessPiece) pieceFactory.createKing("white"));
+        board[0][4].setPiece((ChessPiece) pieceFactory.createKing(false));
+        board[7][4].setPiece((ChessPiece) pieceFactory.createKing(true));
         posBlackKing = "E8";
         posWhiteKing = "E1";
     }

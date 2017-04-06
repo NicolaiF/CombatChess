@@ -1,10 +1,10 @@
 package interfaces;
 
 public interface AbstractPieceFactory {
-    Piece createPawn(String color);
-    Piece createRook(String color);
-    Piece createKnight(String color);
-    Piece createBishop(String color);
-    Piece createQueen(String color);
-    Piece createKing(String color);
+    Piece createPawn(boolean isWhite);
+    Piece createRook(boolean isWhite);
+    Piece createKnight(boolean isWhite);
+    Piece createBishop(boolean isWhite);
+    Piece createQueen(boolean isWhite);
+    Piece createKing(boolean isWhite);
 }
