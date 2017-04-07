@@ -412,7 +412,7 @@ public class Board {
      * @param column horizontal index in board
      * @return the tile in this pos, null if none
      */
-    private Tile getTile(int row, int column){
+    public Tile getTile(int row, int column){
         if(row < 0 || row > 7 || column < 0 || column > 7){
             return null;
         }
@@ -451,7 +451,7 @@ public class Board {
      * @param newColumn column index
      * @return textual position
      */
-    private String convertIntsToPos(int newRow, int newColumn) {
+    public String convertIntsToPos(int newRow, int newColumn) {
         return intsToPositionDictionary.get(newRow + "," + newColumn);
     }
 
