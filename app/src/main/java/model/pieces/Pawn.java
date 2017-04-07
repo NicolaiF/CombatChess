@@ -9,6 +9,7 @@ public class Pawn extends ChessPiece {
 
     private ArrayList<Move> legalMoves = new ArrayList<>();
     private ArrayList<Move> captureMoves = new ArrayList<>();
+    private boolean isMoved = false;
 
     /**
      * @param sprite visual representation of the piece
@@ -32,8 +33,10 @@ public class Pawn extends ChessPiece {
     }
 
     public void moved(){
-        // Removing possibility to move two steps forward
-        legalMoves.remove(1);
+        if(!isMoved) {
+            isMoved = true;
+            legalMoves.remove(1);
+        }
     }
 
     @Override

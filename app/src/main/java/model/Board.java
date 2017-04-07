@@ -219,10 +219,10 @@ public class Board {
             newRow = index[0] + move.getRowOffset();
             newColumn = index[1] + move.getColumnOffset();
 
-            Tile tile = getTile(newRow + move.getRowOffset(), newColumn +  move.getColumnOffset());
+            Tile tile = getTile(newRow, newColumn);
             // Checking if this tile exists and contains enemy piece
             if (tile != null && tile.hasPiece() && !tile.getPiece().getColor().equals(chessPiece.getColor())) {
-                legalMoves.add(intsToPositionDictionary.get(Integer.toString(newRow + move.getRowOffset()) + "," + Integer.toString(newColumn +  move.getColumnOffset())));
+                legalMoves.add(intsToPositionDictionary.get(Integer.toString(newRow) + "," + Integer.toString(newColumn)));
             }
         }
         return legalMoves;
