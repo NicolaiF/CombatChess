@@ -16,35 +16,42 @@ public class ChessBoardController {
         this.board = board;
     }
 
+    public void setHighligtedOnTiles(ArrayList<String> tilePos){
+        for (String pos:tilePos) {
+            board.getTile(pos).setHiglighted(true);
+        }
+    }
+
+    public ArrayList<String> getLegalMoves(boolean whiteTurn, int[] index){
+        String pos = board.convertIntsToPos(index[0], index[1]);
+        String pieceColor;
+        if(whiteTurn)
+            pieceColor = "white";
+        else pieceColor = "black";
+        // Checks if the players owns this piece, and returns legal moves if it does
+        if(pieceColor.equals(board.getTile(pos).getPiece().getColor())){
+            return board.getLegalMoves(pos);
+        }
+        return new ArrayList<>();
+    }
     /**
      * @param oldIndex The old position for the chess piece
      * @param newIndex The new position for this chess piece
      * @return true if the piece was moved, else false
      */
-    public boolean movePiece(boolean whiteTurn ,int[] oldIndex, int[] newIndex){
-        String oldPos = board.convertIntsToPos(oldIndex[0],oldIndex[1]);
-        String newPos = board.convertIntsToPos(newIndex[0],newIndex[1]);
+    public boolean movePiece(ArrayList<String> legalMoves ,int[] oldIndex, int[] newIndex) {
+        String oldPos = board.convertIntsToPos(oldIndex[0], oldIndex[1]);
+        String newPos = board.convertIntsToPos(newIndex[0], newIndex[1]);
 
-        String pieceColor;
-        if(whiteTurn){
-            pieceColor = "white";
-        } else {
-            pieceColor = "black";
-        }
+        if (legalMoves.contains(newPos)) {
+            ChessPiece chessPiece = board.getTile(oldPos).removePiece();
+            board.getTile(newPos).setPiece(chessPiece);
 
-        // Checks if the players owns this piece, and that it's a legal move
-        if(pieceColor.equals(board.getTile(oldPos).getPiece().getColor())){
-            if(board.getLegalMoves(oldPos).contains(newPos)){
-                ChessPiece chessPiece = board.getTile(oldPos).removePiece();
-                board.getTile(newPos).setPiece(chessPiece);
-
-                if(chessPiece instanceof Pawn){
-                    Pawn pawn = (Pawn) chessPiece;
-                    pawn.moved();
-                }
-
-                return true;
+            if (chessPiece instanceof Pawn) {
+                Pawn pawn = (Pawn) chessPiece;
+                pawn.moved();
             }
+            return true;
         }
         return false;
     }

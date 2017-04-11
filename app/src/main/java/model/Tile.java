@@ -9,6 +9,7 @@ public class Tile {
     private String color;
     private ChessPiece chessPiece;
     private PowerUp powerUp;
+    private boolean higlighted;
 
     /**
      * Creates a new Tile on the chess board
@@ -73,5 +74,9 @@ public class Tile {
 
     public boolean hasPiece() {
         return chessPiece != null;
+    }
+
+    public void setHiglighted(boolean higlighted) {
+        this.higlighted = higlighted;
     }
 }

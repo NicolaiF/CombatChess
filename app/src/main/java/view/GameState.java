@@ -16,6 +16,8 @@ import android.view.Display;
 import android.view.MotionEvent;
 import android.view.WindowManager;
 
+import java.util.ArrayList;
+
 import sheep.graphics.Image;
 import sheep.input.TouchListener;
 
@@ -29,6 +31,7 @@ public class GameState extends State {
     private float pieceWidth;
     private float scale;
     private boolean whiteTurn;
+    private ArrayList<String> legalMoves;
 
 
     public GameState(Game game, final ChessBoardController controller){
@@ -77,22 +80,25 @@ public class GameState extends State {
                     index[0] = row;
                     index[1] = column;
                     posSelectedPiece = index;
+                    legalMoves = controller.getLegalMoves(whiteTurn, posSelectedPiece);
+                    controller.setHighligtedOnTiles(legalMoves);
                     return true;
                 }
-
+                //TODO Add code that checks if new piece is of the same color, then simply put that piece as selected piece and run legal moves,same as above
                 // A piece is selected and a new tile is clicked. Try to move the piece
-                if(posSelectedPiece != null && controller.hasTile(row, column)){
+                if(posSelectedPiece != null && legalMoves != null && !legalMoves.isEmpty() && controller.hasTile(row, column)){
                     int[] newPos = new int[2];
                     newPos[0] = row;
                     newPos[1] = column;
-                    if(controller.movePiece(whiteTurn, posSelectedPiece, newPos)){
+                    if(controller.movePiece(legalMoves, posSelectedPiece, newPos)){
                         // Move was successful other players turn
                         whiteTurn = !whiteTurn;
                     }
                     posSelectedPiece = null;
+                    legalMoves = null;
                     return true;
                 }
-
+                legalMoves = null;
                 posSelectedPiece = null;
                 return false;
             }
