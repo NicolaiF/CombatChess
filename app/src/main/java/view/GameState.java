@@ -2,14 +2,12 @@ package view;
 
 import controller.ChessBoardController;
 import main.R;
-import model.pieces.ChessPiece;
 import sheep.game.Game;
 import sheep.game.Sprite;
 import sheep.game.State;
 
 import android.content.Context;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Point;
 import android.util.Log;
 import android.view.Display;
@@ -49,7 +47,7 @@ public class GameState extends State {
         screenHeight = size.y;
 
         // Setting the chess board sprite
-        final Image boardImage = new Image(R.drawable.fill_board);
+        final Image boardImage = new Image(R.drawable.wood_board);
         chessBoard = new Sprite(boardImage);
         scale = screenWidth/boardImage.getWidth();
         chessBoard.setScale(scale, scale);
@@ -74,17 +72,16 @@ public class GameState extends State {
                 Log.d("Clicked : ", "row: " + row);
                 Log.d("Clicked : ", "SelectedPiecePos: " + posSelectedPiece);
 
-                // A piece is not selected and a new piece is clicked
+                // A piece is not selected and a new piece is clicked. Set is as selected piece
                 if(posSelectedPiece == null && controller.hasPiece(row, column)){
                     int[] index = new int[2];
                     index[0] = row;
                     index[1] = column;
                     posSelectedPiece = index;
                     legalMoves = controller.getLegalMoves(whiteTurn, posSelectedPiece);
-                    controller.setHighligtedOnTiles(legalMoves);
+                    controller.setHighlightedOnTiles(legalMoves, true);
                     return true;
                 }
-                //TODO Add code that checks if new piece is of the same color, then simply put that piece as selected piece and run legal moves,same as above
                 // A piece is selected and a new tile is clicked. Try to move the piece
                 if(posSelectedPiece != null && legalMoves != null && !legalMoves.isEmpty() && controller.hasTile(row, column)){
                     int[] newPos = new int[2];
@@ -94,11 +91,17 @@ public class GameState extends State {
                         // Move was successful other players turn
                         whiteTurn = !whiteTurn;
                     }
+                    // Remove highlighting on tiles
+                    controller.setHighlightedOnTiles(legalMoves, false);
                     posSelectedPiece = null;
                     legalMoves = null;
                     return true;
                 }
-                legalMoves = null;
+                // Illegal action was attempted. Remove highlighted on tiles and selected piece if any
+                if(legalMoves != null){
+                    controller.setHighlightedOnTiles(legalMoves, false);
+                    legalMoves = null;
+                }
                 posSelectedPiece = null;
                 return false;
             }
@@ -117,12 +120,22 @@ public class GameState extends State {
 
     public void draw(Canvas canvas){
         chessBoard.draw(canvas);
+
         for (int row = 0; row < 8; row++) {
 
             for (int column = 0; column < 8; column++) {
 
-                if(controller.getTiles()[row][column].hasPiece()){
-                    Sprite sprite = controller.getTiles()[row][column].getPiece().getSprite();
+                // TODO: Fix bug with blinking highlight tiles in left corner. The error is somewhere in this class
+                if(controller.isTileHighlighted(row, column)){
+                    Sprite sprite = controller.getTile(row, column).getHighlightSprite();
+                    sprite.setPosition(column * pieceWidth, (screenHeight-screenWidth)/2 + row * pieceWidth );
+                    sprite.setScale(scale, scale);
+                    sprite.setOffset(0,0);
+                    sprite.draw(canvas);
+                }
+
+                if(controller.hasPiece(row, column)){
+                    Sprite sprite = controller.getPiece(row, column).getSprite();
                     sprite.setPosition(column * pieceWidth, (screenHeight-screenWidth)/2 + row * pieceWidth );
                     sprite.setScale(scale, scale);
                     sprite.setOffset(0,0);
@@ -135,13 +148,19 @@ public class GameState extends State {
     public void update(float dt){
         chessBoard.update(dt);
 
+        Log.d("Debug : ", "Legal Moves: " + legalMoves);
+
         for (int row = 0; row < 8; row++) {
 
             for (int column = 0; column < 8; column++) {
 
-                if(controller.getTiles()[row][column].hasPiece()){
-                    Sprite sprite = controller.getTiles()[row][column].getPiece().getSprite();
-                    sprite.setPosition(column * pieceWidth, (screenHeight-screenWidth)/2 + row * pieceWidth );
+                if(controller.isTileHighlighted(row, column)){
+                    Sprite sprite = controller.getTile(row, column).getHighlightSprite();
+                    sprite.update(dt);
+                }
+
+                if(controller.getTile(row, column).hasPiece()){
+                    Sprite sprite = controller.getPiece(row, column).getSprite();
                     sprite.update(dt);
                 }
             }

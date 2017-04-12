@@ -16,12 +16,21 @@ public class ChessBoardController {
         this.board = board;
     }
 
-    public void setHighligtedOnTiles(ArrayList<String> tilePos){
+    /** Sets if a tile is highlighted
+     * @param tilePos positions of the tiles to be changed
+     * @param isHighlighted true is highlighted, else false
+     */
+    public void setHighlightedOnTiles(ArrayList<String> tilePos, boolean isHighlighted){
         for (String pos:tilePos) {
-            board.getTile(pos).setHiglighted(true);
+            board.getTile(pos).setHighlighted(isHighlighted);
         }
     }
 
+    /** Returns legal moves for a piece at a specific location
+     * @param whiteTurn true if it's white players turn
+     * @param index position in the chess board
+     * @return A list of legal moves
+     */
     public ArrayList<String> getLegalMoves(boolean whiteTurn, int[] index){
         String pos = board.convertIntsToPos(index[0], index[1]);
         String pieceColor;
@@ -56,22 +65,6 @@ public class ChessBoardController {
         return false;
     }
 
-    /**
-     * @param pos The position of the piece checked for legal moves
-     * @param player The player interacting
-     */
-    public void showLegalMoves(String pos, Player player){
-        // Showing legal moves if player owns this chess piece
-        if(player.ownsPiece(board.getTile(pos).getPiece())){
-            ArrayList<String> legalMoves = board.getLegalMoves(pos);
-            System.out.println("Legal moves for " + board.getTile(pos).getPiece() + " at " + pos + " :" + legalMoves);
-        }
-    }
-
-    public Tile[][] getTiles(){
-        return board.getTiles();
-    }
-
     /** Returns the piece in this position. Null if none
      * @param row vertical index
      * @param column horizontal index
@@ -98,5 +91,27 @@ public class ChessBoardController {
      */
     public boolean hasTile(int row, int column) {
         return board.getTile(row, column) != null;
+    }
+
+    /** Returns the tile in this position
+     * @param row vertical index
+     * @param column horizontal index
+     * @return the tile in this position
+     */
+    public Tile getTile(int row, int column) {
+        return board.getTile(row, column);
+    }
+
+    /**
+     * @param row vertical index
+     * @param column horizontal index
+     * @return true if the tile is highlighted, else false
+     */
+    public boolean isTileHighlighted(int row, int column) {
+        return getTile(row, column).isHighlighted();
+    }
+
+    public int[] convertPosToInts(String pos){
+        return board.convertPosToInts(pos);
     }
 }

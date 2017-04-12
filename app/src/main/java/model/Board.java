@@ -430,7 +430,7 @@ public class Board {
      * @param pos A textual position in the chess board, i.e A8, A7, etc.
      * @return An integer array with indexes to the board
      */
-    private int[] convertPosToInts(String pos){
+    public int[] convertPosToInts(String pos){
         String value = positionToIntsDictionary.get(pos);
 
         // Returns null if this pos is not in the board
