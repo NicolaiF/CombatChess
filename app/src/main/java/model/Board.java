@@ -183,6 +183,13 @@ public class Board {
                 if(tile != null){
                     // Checking if this tile contains a piece that is not an ally
                     if(tile.hasPiece()){
+
+                        // Stop iteration if piece is a pawn
+                        if(getTile(row, column).getPiece() instanceof Pawn) {
+                            moves.clear();
+                            break;
+                        }
+
                         // Checking if this piece is an enemy piece
                         if(!tile.getPiece().getColor().equals(chessPiece.getColor())){
                             if(!(chessPiece instanceof Pawn)){
@@ -202,6 +209,7 @@ public class Board {
             }
         }
 
+
         // Special case for capturing moves
         moves = chessPiece.getCaptureMoves();
         for (Move move : moves) {
@@ -211,7 +219,11 @@ public class Board {
             Tile tile = getTile(newRow, newColumn);
             // Checking if this tile exists and contains enemy piece
             if (tile != null && tile.hasPiece() && !tile.getPiece().getColor().equals(chessPiece.getColor())) {
-                legalMoves.add(newRow + "," + newColumn);
+
+                // Simulate move and check if it is a legal state
+                if(isLegalMove(row, column, newRow, newColumn)){
+                    legalMoves.add(newRow + "," + newColumn);
+                }
             }
         }
         return legalMoves;
