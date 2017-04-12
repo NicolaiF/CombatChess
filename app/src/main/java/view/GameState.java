@@ -2,6 +2,7 @@ package view;
 
 import controller.ChessBoardController;
 import main.R;
+import model.pieces.ChessPiece;
 import sheep.game.Game;
 import sheep.game.Sprite;
 import sheep.game.State;
@@ -24,6 +25,7 @@ public class GameState extends State {
     private ChessBoardController controller;
     private Sprite chessBoard;
     private int[] posSelectedPiece;
+    private ChessPiece piece;
     private int screenWidth;
     private int screenHeight;
     private float pieceWidth;
@@ -69,13 +71,11 @@ public class GameState extends State {
 
         // A piece is not selected and a new piece is clicked. Set is as selected piece
         if(posSelectedPiece == null && controller.hasPiece(row, column)){
-            int[] index = new int[2];
-            index[0] = row;
-            index[1] = column;
-            posSelectedPiece = index;
-            legalMoves = controller.getLegalMoves(whiteTurn, row, column);
-            controller.setHighlightedOnTiles(legalMoves, true);
-            return true;
+            return onChessPieceSelected(column, row);
+        }
+        //A piece is selected and a new piece of the same color is selected
+        if(posSelectedPiece != null && controller.hasPiece(row,column) && controller.getPiece(row,column).getColor() == piece.getColor()){
+            return onChessPieceSelected(column, row);
         }
         // A piece is selected and a new tile is clicked. Try to move the piece
         if(posSelectedPiece != null && legalMoves != null && !legalMoves.isEmpty() && controller.hasTile(row, column)){
@@ -88,6 +88,7 @@ public class GameState extends State {
             }
             // Remove highlighting on tiles
             controller.setHighlightedOnTiles(legalMoves, false);
+            piece = null;
             posSelectedPiece = null;
             legalMoves = null;
             return true;
@@ -97,8 +98,23 @@ public class GameState extends State {
             controller.setHighlightedOnTiles(legalMoves, false);
             legalMoves = null;
         }
+        piece = null;
         posSelectedPiece = null;
         return false;
+    }
+
+    private boolean onChessPieceSelected(int column, int row) {
+        int[] index = new int[2];
+        index[0] = row;
+        index[1] = column;
+        posSelectedPiece = index;
+        piece = controller.getPiece(row, column);
+        //Remove legal moves on old legal moves
+        if(legalMoves != null)
+            controller.setHighlightedOnTiles(legalMoves, false);
+        legalMoves = controller.getLegalMoves(whiteTurn, row, column);
+        controller.setHighlightedOnTiles(legalMoves, true);
+        return true;
     }
 
     @Override
