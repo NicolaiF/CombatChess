@@ -1,7 +1,10 @@
 package model;
 
 import interfaces.PowerUp;
+import main.R;
 import model.pieces.ChessPiece;
+import sheep.game.Sprite;
+import sheep.graphics.Image;
 
 
 public class Tile {
@@ -9,7 +12,8 @@ public class Tile {
     private String color;
     private ChessPiece chessPiece;
     private PowerUp powerUp;
-    private boolean higlighted;
+    private boolean highlighted;
+    private Sprite highlightSprite;
 
     /**
      * Creates a new Tile on the chess board
@@ -17,6 +21,7 @@ public class Tile {
      */
     public Tile(String color){
         this.color = color;
+        highlightSprite = new Sprite(new Image(R.drawable.highlight_babyblue));
     }
 
     /** Removes the piece in this tile
@@ -76,7 +81,19 @@ public class Tile {
         return chessPiece != null;
     }
 
-    public void setHiglighted(boolean higlighted) {
-        this.higlighted = higlighted;
+    /**
+     * @param highlighted true if this tile is highlighted
+     *
+     * */
+    public void setHighlighted(boolean highlighted) {
+        this.highlighted = highlighted;
+    }
+
+    public Sprite getHighlightSprite(){
+        return highlightSprite;
+    }
+
+    public boolean isHighlighted() {
+        return highlighted;
     }
 }

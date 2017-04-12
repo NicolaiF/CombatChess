@@ -16,10 +16,9 @@ public class Board {
     private Tile[][] board = new Tile[8][8];
     private String[] colors = new String[2];
     private AbstractPieceFactory pieceFactory = new ClassicPieceFactory();
-    private Map<String, String> positionToIntsDictionary = new HashMap<>();
     private Map<String, String> intsToPositionDictionary = new HashMap<>();
-    private String posWhiteKing;
-    private String posBlackKing;
+    private int[] posWhiteKing;
+    private int[] posBlackKing;
     private Sprite sprite;
 
     public Board(){
@@ -27,14 +26,12 @@ public class Board {
         colors[0] = "#000000";
         colors[1] = "#FFFFFF";
 
-        // Starting position for kings
-        posBlackKing = "E8";
-        posWhiteKing = "E1";
+        posBlackKing = new int[2];
+        posWhiteKing = new int[2];
 
         generateBoard();
-        placeStartingPieces();
-        generatePositionToIntsDictionary();
         generateIntsToPositionDictionary();
+        placeStartingPieces();
     }
 
     /**
@@ -83,19 +80,10 @@ public class Board {
         // Adding kings
         board[0][4].setPiece((ChessPiece) pieceFactory.createKing(false));
         board[7][4].setPiece((ChessPiece) pieceFactory.createKing(true));
-        posBlackKing = "E8";
-        posWhiteKing = "E1";
-    }
-
-    /**
-     * Generates a dictionary that converts a textual position to indexes in board
-     */
-    private void generatePositionToIntsDictionary() {
-        for(int row = 0; row<8; row++){
-            for(char c : "ABCDEFGH".toCharArray()){
-                positionToIntsDictionary.put(c + Integer.toString(8-row),row + "," + ((int) c - 65));
-            }
-        }
+        posBlackKing[0] = 0;
+        posBlackKing[1] = 4;
+        posWhiteKing[0] = 7;
+        posWhiteKing[1] = 4;
     }
 
     /**
@@ -111,55 +99,56 @@ public class Board {
 
     /** Adds a chess piece in this position of the chess board. The method must find the correct tile and add the
      * chess piece to the tile
-     * @param pos The position for the chess piece
+     * @param row vertical index in the board
+     * @param column horizontal index in the board
      * @param chessPiece The chess piece to be added
      */
-    public void setPiece(String pos, ChessPiece chessPiece) {
-        getTile(pos).setPiece(chessPiece);
+    public void setPiece(int row, int column, ChessPiece chessPiece) {
+        getTile(row, column).setPiece(chessPiece);
     }
 
     /** Adds a power up in this position on the chess board. The method must find the correct tile and add the power
      * up to the tile
-     * @param pos The position for the new power up
+     * @param row vertical index in the board
+     * @param column horizontal index in the board
      * @param powerUp The power up to be added
      */
-    public void setPowerUp(String pos, PowerUp powerUp) {
-        getTile(pos).setPowerUp(powerUp);
+    public void setPowerUp(int row, int column, PowerUp powerUp) {
+        getTile(row, column).setPowerUp(powerUp);
     }
 
     /**
-     * @param pos Position of the tile
+     * @param row vertical index in the board
+     * @param column horizontal index in the board
      * @return true if it has a piece, else false
      */
-    public boolean hasPiece(String pos) {
-        return getTile(pos).getPiece() != null;
+    public boolean hasPiece(int row, int column) {
+        return getTile(row, column).getPiece() != null;
     }
 
     /**
-     * @param pos Position of the tile
+     * @param row vertical index in the board
+     * @param column horizontal index in the board
      * @return true if it has a power up, else false
      */
-    public boolean hasPowerUp(String pos) {
-        return getTile(pos).getPowerUp() != null;
+    public boolean hasPowerUp(int row, int column) {
+        return getTile(row, column).getPowerUp() != null;
     }
 
     /** Finds all legal moves for the piece in this position
-     * @param pos textual position on the board of the piece to be checked for legal moves
+     * @param row vertical index in the board
+     * @param column horizontal index in the board
      * @return A list of legal moves for this piece
      */
-    public ArrayList<String> getLegalMoves(String pos) {
+    public ArrayList<String> getLegalMoves(int row, int column) {
         ArrayList<String> legalMoves = new ArrayList<>();
-        int[] index = convertPosToInts(pos);
 
-        int newRow;
-        int newColumn;
-
-        ChessPiece chessPiece = getTile(pos).getPiece();
+        ChessPiece chessPiece = getTile(row, column).getPiece();
         ArrayList<Move> moves = chessPiece.getLegalMoves();
 
         for(Move move : moves){
-            newRow = index[0] + move.getRowOffset();
-            newColumn = index[1] + move.getColumnOffset();
+            int newRow = row + move.getRowOffset();
+            int newColumn = column + move.getColumnOffset();
 
             if(move.isContinuous()){
                 Tile tile = getTile(newRow, newColumn);
@@ -172,15 +161,15 @@ public class Board {
                             break;
                         } else {
                             // Simulate move and check if it is a legal state
-                            if(isLegalMove(pos, newRow, newColumn)){
-                                legalMoves.add(intsToPositionDictionary.get(Integer.toString(newRow)+ "," + Integer.toString(newColumn)));
+                            if(isLegalMove(row, column, newRow, newColumn)){
+                                legalMoves.add(newRow + "," + newColumn);
                             }
                             break;
                         }
                     } else {
                         // Simulate move and check if it is a legal state
-                        if(isLegalMove(pos, newRow, newColumn)){
-                            legalMoves.add(intsToPositionDictionary.get(Integer.toString(newRow)+ "," + Integer.toString(newColumn)));
+                        if(isLegalMove(row, column, newRow, newColumn)){
+                            legalMoves.add(newRow + "," + newColumn);
                         }
                         // Updating variables for next iteration
                         newRow += move.getRowOffset();
@@ -198,15 +187,15 @@ public class Board {
                         if(!tile.getPiece().getColor().equals(chessPiece.getColor())){
                             if(!(chessPiece instanceof Pawn)){
                                 // Simulate move and check if it is a legal state
-                                if(isLegalMove(pos, newRow, newColumn)){
-                                    legalMoves.add(intsToPositionDictionary.get(Integer.toString(newRow)+ "," + Integer.toString(newColumn)));
+                                if(isLegalMove(row, column, newRow, newColumn)){
+                                    legalMoves.add(newRow + "," + newColumn);
                                 }
                             }
                         }
                     } else {
                         // Simulate move and check if it is a legal state
-                        if(isLegalMove(pos, newRow, newColumn)){
-                            legalMoves.add(intsToPositionDictionary.get(Integer.toString(newRow)+ "," + Integer.toString(newColumn)));
+                        if(isLegalMove(row, column, newRow, newColumn)){
+                            legalMoves.add(newRow + "," + newColumn);
                         }
                     }
                 }
@@ -216,38 +205,41 @@ public class Board {
         // Special case for capturing moves
         moves = chessPiece.getCaptureMoves();
         for (Move move : moves) {
-            newRow = index[0] + move.getRowOffset();
-            newColumn = index[1] + move.getColumnOffset();
+            int newRow = row + move.getRowOffset();
+            int newColumn = column + move.getColumnOffset();
 
             Tile tile = getTile(newRow, newColumn);
             // Checking if this tile exists and contains enemy piece
             if (tile != null && tile.hasPiece() && !tile.getPiece().getColor().equals(chessPiece.getColor())) {
-                legalMoves.add(intsToPositionDictionary.get(Integer.toString(newRow) + "," + Integer.toString(newColumn)));
+                legalMoves.add(newRow + "," + newColumn);
             }
         }
         return legalMoves;
     }
 
     /** Simulating move to check if it's a legal move
-     * @param oldPos old position for piece to be checked for legal moves
+     * @param oldRow vertical index in the board
+     * @param oldColumn horizontal index in the board
      * @param newRow new row for piece to be moved
      * @param newColumn new column for piece to be moved
      * @return
      */
-    private boolean isLegalMove(String oldPos, int newRow, int newColumn) {
-        String pieceColor = getTile(oldPos).getPiece().getColor();
+    private boolean isLegalMove(int oldRow, int oldColumn, int newRow, int newColumn) {
+        String pieceColor = getTile(oldRow, oldColumn).getPiece().getColor();
 
         // Simulating move
-        ChessPiece removedPiece = getTile(convertIntsToPos(newRow, newColumn)).removePiece();
-        setPiece(convertIntsToPos(newRow, newColumn), getTile(oldPos).getPiece());
-        setPiece(oldPos, null);
+        ChessPiece removedPiece = getTile(newRow, newColumn).removePiece();
+        setPiece(newRow, newColumn, getTile(oldRow, oldColumn).getPiece());
+        setPiece(oldRow, oldColumn, null);
 
         // Updating position of the king
         if(getTile(newRow, newColumn).getPiece() instanceof King){
             if(getTile(newRow, newColumn).getPiece().getColor().equals("black")){
-                posBlackKing = convertIntsToPos(newRow, newColumn);
+                posBlackKing[0] = newRow;
+                posBlackKing[1] = newColumn;
             } else {
-                posWhiteKing = convertIntsToPos(newRow, newColumn);
+                posWhiteKing[0] = newRow;
+                posWhiteKing[1] = newColumn;
             }
         }
 
@@ -260,16 +252,18 @@ public class Board {
             isLegal = !isKingAttacked(posWhiteKing);
         }
         // Resetting the board
-        setPiece(oldPos, getTile(convertIntsToPos(newRow, newColumn)).removePiece());
-        setPiece(convertIntsToPos(newRow, newColumn), removedPiece);
+        setPiece(oldRow, oldColumn, getTile(newRow, newColumn).removePiece());
+        setPiece(newRow, newColumn, removedPiece);
 
         // Resetting the position of the king if it was moved
-        if(getTile(oldPos).getPiece() instanceof King){
+        if(getTile(oldRow, oldColumn).getPiece() instanceof King){
 
-            if(getTile(oldPos).getPiece().getColor().equals("black")){
-                posBlackKing = oldPos;
+            if(getTile(oldRow, oldColumn).getPiece().getColor().equals("black")){
+                posBlackKing[0] = oldRow;
+                posBlackKing[1] = oldColumn;
             } else {
-                posWhiteKing = oldPos;
+                posWhiteKing[0] = oldRow;
+                posWhiteKing[1] = oldColumn;
             }
         }
 
@@ -280,12 +274,12 @@ public class Board {
      * @param kingPos position of the king
      * @return true if attacked, else false
      */
-    private boolean isKingAttacked(String kingPos){
-        int[] index = convertPosToInts(kingPos);
-        int kingRow = index[0];
-        int kingColumn = index[1];
+    private boolean isKingAttacked(int[] kingPos){
 
-        String kingColor = getTile(kingPos).getPiece().getColor();
+        int kingRow = kingPos[0];
+        int kingColumn = kingPos[1];
+
+        String kingColor = getTile(kingRow, kingColumn).getPiece().getColor();
 
         // Checking all tiles in the chess board
         for (int pieceRow = 0; pieceRow < 8; pieceRow++) {
@@ -399,15 +393,6 @@ public class Board {
     }
 
     /**
-     * @param pos textual position in the board
-     * @return the tile in this pos, null if none
-     */
-    public Tile getTile(String pos) {
-        int[] index = convertPosToInts(pos);
-        return board[index[0]][index[1]];
-    }
-
-    /**
      * @param row vertical index in board
      * @param column horizontal index in board
      * @return the tile in this pos, null if none
@@ -426,34 +411,6 @@ public class Board {
         return  board;
     }
 
-    /** Converts a textual position to indexes in board
-     * @param pos A textual position in the chess board, i.e A8, A7, etc.
-     * @return An integer array with indexes to the board
-     */
-    private int[] convertPosToInts(String pos){
-        String value = positionToIntsDictionary.get(pos);
-
-        // Returns null if this pos is not in the board
-        if(value == null){
-            return null;
-        }
-
-        int[] positions = new int[2];
-
-        positions[0] = Integer.valueOf(value.split(",")[0]);
-        positions[1] = Integer.valueOf(value.split(",")[1]);
-
-        return positions;
-    }
-
-    /** Converts indexes to position
-     * @param newRow row index
-     * @param newColumn column index
-     * @return textual position
-     */
-    public String convertIntsToPos(int newRow, int newColumn) {
-        return intsToPositionDictionary.get(newRow + "," + newColumn);
-    }
 
     public Sprite getSprite() {
         return sprite;
