@@ -22,39 +22,44 @@ public class ChessBoardController {
      */
     public void setHighlightedOnTiles(ArrayList<String> tilePos, boolean isHighlighted){
         for (String pos:tilePos) {
-            board.getTile(pos).setHighlighted(isHighlighted);
+            String[] index = pos.split(",");
+            board.getTile(Integer.valueOf(index[0]), Integer.valueOf(index[1])).setHighlighted(isHighlighted);
         }
     }
 
     /** Returns legal moves for a piece at a specific location
      * @param whiteTurn true if it's white players turn
-     * @param index position in the chess board
+     * @param row vertical index
+     * @param column horizontal index
      * @return A list of legal moves
      */
-    public ArrayList<String> getLegalMoves(boolean whiteTurn, int[] index){
-        String pos = board.convertIntsToPos(index[0], index[1]);
+    public ArrayList<String> getLegalMoves(boolean whiteTurn, int row, int column){
         String pieceColor;
-        if(whiteTurn)
+        if(whiteTurn){
             pieceColor = "white";
-        else pieceColor = "black";
+        } else {
+            pieceColor = "black";
+        }
         // Checks if the players owns this piece, and returns legal moves if it does
-        if(pieceColor.equals(board.getTile(pos).getPiece().getColor())){
-            return board.getLegalMoves(pos);
+        if(pieceColor.equals(board.getTile(row, column).getPiece().getColor())){
+            return board.getLegalMoves(row, column);
         }
         return new ArrayList<>();
     }
-    /**
-     * @param oldIndex The old position for the chess piece
-     * @param newIndex The new position for this chess piece
+    /** Moves a piece from one tile to another
+     * @param oldRow vertical index
+     * @param oldColumn horizontal index
+     * @param newRow vertical index
+     * @param newColumn horizontal index
      * @return true if the piece was moved, else false
      */
-    public boolean movePiece(ArrayList<String> legalMoves ,int[] oldIndex, int[] newIndex) {
-        String oldPos = board.convertIntsToPos(oldIndex[0], oldIndex[1]);
-        String newPos = board.convertIntsToPos(newIndex[0], newIndex[1]);
+    public boolean movePiece(ArrayList<String> legalMoves, int oldRow, int oldColumn, int newRow, int newColumn) {
+
+        String newPos = newRow + "," + newColumn;
 
         if (legalMoves.contains(newPos)) {
-            ChessPiece chessPiece = board.getTile(oldPos).removePiece();
-            board.getTile(newPos).setPiece(chessPiece);
+            ChessPiece chessPiece = board.getTile(oldRow, oldColumn).removePiece();
+            board.getTile(newRow, newColumn).setPiece(chessPiece);
 
             if (chessPiece instanceof Pawn) {
                 Pawn pawn = (Pawn) chessPiece;
@@ -71,8 +76,7 @@ public class ChessBoardController {
      * @return chess piece in this location
      */
     public ChessPiece getPiece(int row, int column) {
-        String pos = board.convertIntsToPos(row, column);
-        return board.getTile(pos).getPiece();
+        return board.getTile(row, column).getPiece();
     }
 
     /** Returns true if this position contains piece
@@ -81,7 +85,7 @@ public class ChessBoardController {
      * @return true if this tile contains a piece
      */
     public boolean hasPiece(int row, int column) {
-        return board.hasPiece(board.convertIntsToPos(row, column));
+        return board.hasPiece(row, column);
     }
 
     /** Returns true if this position contains a tile
@@ -109,9 +113,5 @@ public class ChessBoardController {
      */
     public boolean isTileHighlighted(int row, int column) {
         return getTile(row, column).isHighlighted();
-    }
-
-    public int[] convertPosToInts(String pos){
-        return board.convertPosToInts(pos);
     }
 }

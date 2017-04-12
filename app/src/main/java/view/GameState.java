@@ -78,7 +78,7 @@ public class GameState extends State {
                     index[0] = row;
                     index[1] = column;
                     posSelectedPiece = index;
-                    legalMoves = controller.getLegalMoves(whiteTurn, posSelectedPiece);
+                    legalMoves = controller.getLegalMoves(whiteTurn, row, column);
                     controller.setHighlightedOnTiles(legalMoves, true);
                     return true;
                 }
@@ -87,7 +87,7 @@ public class GameState extends State {
                     int[] newPos = new int[2];
                     newPos[0] = row;
                     newPos[1] = column;
-                    if(controller.movePiece(legalMoves, posSelectedPiece, newPos)){
+                    if(controller.movePiece(legalMoves, posSelectedPiece[0], posSelectedPiece[1], newPos[0], newPos[1])){
                         // Move was successful other players turn
                         whiteTurn = !whiteTurn;
                     }
