@@ -120,8 +120,8 @@ public class GameState extends State {
     @Override
     public void draw(Canvas canvas){
         canvas.drawColor(Color.GRAY);
-        chessBoard.draw(canvas);
         chessBoard.update(0);
+        chessBoard.draw(canvas);
 
         for (int row = 0; row < 8; row++) {
 
@@ -141,8 +141,8 @@ public class GameState extends State {
                     sprite.setPosition(column * pieceWidth, (screenHeight-screenWidth)/2 + row * pieceWidth );
                     sprite.setScale(scale, scale);
                     sprite.setOffset(0,0);
-                    sprite.draw(canvas);
                     sprite.update(0);
+                    sprite.draw(canvas);
                 }
             }
         }
