@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="newGame">Nytt spill</string>
+    <string name="continueGame">Fortsett spill</string>
+</resources>
