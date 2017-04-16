@@ -2,9 +2,8 @@ package view;
 
 import android.content.Context;
 import android.graphics.Canvas;
-import android.graphics.Paint;
 import android.graphics.Point;
-import android.graphics.Typeface;
+import android.util.Log;
 import android.view.Display;
 import android.view.MotionEvent;
 import android.view.WindowManager;
@@ -12,6 +11,7 @@ import android.view.WindowManager;
 import controller.ChessBoardController;
 import main.R;
 import model.Board;
+import model.ImageButton;
 import sheep.game.*;
 import sheep.graphics.*;
 import sheep.gui.*;
@@ -22,12 +22,13 @@ public class MenuState extends State {
     private Image backgroundImage;
     private int screenWidth;
     private int screenHeight;
-    private float scale;
+    private int leftMargin = 100;
+    private int topMargin = 100;
     private GameState savedGameState;
 
     private Container buttonContainer;
-    private TextButton buttonNewGame;
-    private TextButton buttonContinueGame;
+    private ImageButton buttonNewGame;
+    private ImageButton buttonContinueGame;
 
     public MenuState(Game game){
         setGame(game);
@@ -42,11 +43,8 @@ public class MenuState extends State {
         screenWidth = size.x;
         screenHeight = size.y;
 
-        // Setting the scale
-        scale = screenWidth/backgroundImage.getWidth();
-
         // Adjusting the background
-        background.setScale(scale, scale);
+        background.setScale(screenWidth/backgroundImage.getWidth(), screenWidth/backgroundImage.getWidth());
         background.setOffset(0, 0);
         background.setPosition(0, 0);
 
@@ -57,12 +55,13 @@ public class MenuState extends State {
 
         buttonContainer = new Container();
 
-        // Setting up font for the labels on the buttons
-        Paint[] paint = new Paint[]{new Font(255, 255, 255, 100, Typeface.DEFAULT, Typeface.BOLD), new Font(255, 255, 255, 100, Typeface.DEFAULT, Typeface.BOLD)};
+        Image imageNewGame = new Image(R.drawable.button_newgame);
+        Image imageContinueGame = new Image(R.drawable.button_continue);
 
-        buttonNewGame = new TextButton(100, 200, getGame().getResources().getString(R.string.newGame), paint) {
+        buttonNewGame = new ImageButton(imageNewGame, leftMargin, topMargin, screenWidth/(imageNewGame.getWidth()*3)){
             @Override
-            public boolean onTouchDown(MotionEvent motionEvent) {
+            public boolean onTouchDown(MotionEvent motionEvent){
+                Log.d("Debug", "New button clicked: " + getBoundingBox().contains(motionEvent.getX(), motionEvent.getY()));
                 if(getBoundingBox().contains(motionEvent.getX(), motionEvent.getY())){
                     savedGameState = new GameState(getGame(), new ChessBoardController(new Board()));
                     getGame().pushState(savedGameState);
@@ -71,12 +70,18 @@ public class MenuState extends State {
                     return false;
                 }
             }
+
+            @Override
+            public boolean onTouchUp(MotionEvent motionEvent){
+                return true;
+            }
         };
-        buttonContinueGame = new TextButton(100, 400, getGame().getResources().getString(R.string.continueGame), paint) {
+        buttonContinueGame = new ImageButton(imageContinueGame, leftMargin, buttonNewGame.getY() + buttonNewGame.getHeight() + topMargin, screenWidth/(imageContinueGame.getWidth()*3)){
+
             @Override
             public boolean onTouchDown(MotionEvent motionEvent) {
+                Log.d("Debug", "Continue button clicked: " + getBoundingBox().contains(motionEvent.getX(), motionEvent.getY()));
                 if (getBoundingBox().contains(motionEvent.getX(), motionEvent.getY()) && savedGameState != null) {
-                    getGame().popState();
                     getGame().pushState(savedGameState);
                     return true;
                 } else {

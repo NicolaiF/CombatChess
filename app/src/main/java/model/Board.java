@@ -1,11 +1,11 @@
 package model;
 
 import interfaces.*;
+import model.factories.ClassicPieceFactory;
 import model.pieces.ChessPiece;
 import model.pieces.King;
 import model.pieces.Pawn;
 import sheep.game.Sprite;
-import sheep.graphics.Image;
 
 import java.util.ArrayList;
 import java.util.HashMap;

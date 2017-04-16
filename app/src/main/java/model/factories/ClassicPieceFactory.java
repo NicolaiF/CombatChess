@@ -1,4 +1,4 @@
-package model;
+package model.factories;
 
 import interfaces.AbstractPieceFactory;
 import interfaces.Piece;
@@ -12,11 +12,9 @@ public class ClassicPieceFactory implements AbstractPieceFactory {
     @Override
     public Piece createPawn(boolean isWhite) {
         if(isWhite){
-            Image img = new Image(R.drawable.classic_fill_white_pawn);
-            return new Pawn(new Sprite(img), isWhite);
+            return new Pawn(new Sprite(new Image(R.drawable.classic_fill_white_pawn)), isWhite);
         } else {
-            Image img = new Image(R.drawable.classic_fill_black_pawn);
-            return new Pawn(new Sprite(img), isWhite);
+            return new Pawn(new Sprite(new Image(R.drawable.classic_fill_black_pawn)), isWhite);
         }
     }
 
