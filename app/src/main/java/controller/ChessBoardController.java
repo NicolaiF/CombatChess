@@ -34,14 +34,9 @@ public class ChessBoardController {
      * @return A list of legal moves
      */
     public ArrayList<String> getLegalMoves(boolean whiteTurn, int row, int column){
-        String pieceColor;
-        if(whiteTurn){
-            pieceColor = "white";
-        } else {
-            pieceColor = "black";
-        }
+
         // Checks if the players owns this piece, and returns legal moves if it does
-        if(pieceColor.equals(board.getTile(row, column).getPiece().getColor())){
+        if(whiteTurn == board.getTile(row, column).getPiece().isWhite()){
             return board.getLegalMoves(row, column);
         }
         return new ArrayList<>();
@@ -59,7 +54,7 @@ public class ChessBoardController {
 
         if (legalMoves.contains(newPos)) {
             ChessPiece chessPiece = board.getTile(oldRow, oldColumn).removePiece();
-            board.getTile(newRow, newColumn).setPiece(chessPiece);
+            board.setPiece(newRow, newColumn, chessPiece);
 
             if (chessPiece instanceof Pawn) {
                 Pawn pawn = (Pawn) chessPiece;

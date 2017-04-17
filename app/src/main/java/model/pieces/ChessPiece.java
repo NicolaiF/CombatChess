@@ -10,7 +10,7 @@ public abstract class ChessPiece implements Piece {
 
     private Sprite sprite;
     private boolean isAlive = true;
-    private String color;
+    private boolean isWhite;
     private String type;
 
     /**
@@ -21,12 +21,7 @@ public abstract class ChessPiece implements Piece {
     public ChessPiece(Sprite sprite, String type, boolean isWhite){
         this.sprite = sprite;
         this.type = type;
-
-        if(isWhite){
-            color = "white";
-        } else {
-            color = "black";
-        }
+        this.isWhite = isWhite;
     }
 
     public void killed(){ isAlive = false; }
@@ -37,8 +32,8 @@ public abstract class ChessPiece implements Piece {
     }
 
     @Override
-    public String getColor() {
-        return color;
+    public boolean isWhite() {
+        return isWhite;
     }
 
     @Override

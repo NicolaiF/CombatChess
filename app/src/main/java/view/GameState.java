@@ -74,7 +74,7 @@ public class GameState extends State {
             return onChessPieceSelected(column, row);
         }
         //A piece is selected and a new piece of the same color is selected
-        if(posSelectedPiece != null && controller.hasPiece(row,column) && controller.getPiece(row,column).getColor() == piece.getColor()){
+        if(posSelectedPiece != null && controller.hasPiece(row,column) && controller.getPiece(row,column).isWhite() == piece.isWhite()){
             return onChessPieceSelected(column, row);
         }
         // A piece is selected and a new tile is clicked. Try to move the piece

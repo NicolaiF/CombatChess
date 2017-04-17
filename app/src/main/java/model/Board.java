@@ -1,5 +1,7 @@
 package model;
 
+import android.util.Log;
+
 import interfaces.*;
 import model.factories.ClassicPieceFactory;
 import model.pieces.ChessPiece;
@@ -105,6 +107,19 @@ public class Board {
      */
     public void setPiece(int row, int column, ChessPiece chessPiece) {
         getTile(row, column).setPiece(chessPiece);
+
+        // Updating position of the king
+        if(chessPiece instanceof King){
+            if(chessPiece.isWhite()){
+                Log.d("Debug", "White king moved");
+                posWhiteKing[0] = row;
+                posWhiteKing[1] = column;
+                Log.d("Debug", "White king pos: " + posWhiteKing[0] + "," + posWhiteKing[1]);
+            } else {
+                posBlackKing[0] = row;
+                posBlackKing[1] = column;
+            }
+        }
     }
 
     /** Adds a power up in this position on the chess board. The method must find the correct tile and add the power
@@ -141,6 +156,8 @@ public class Board {
      * @return A list of legal moves for this piece
      */
     public ArrayList<String> getLegalMoves(int row, int column) {
+        Log.d("Debug", "White King pos: " + posWhiteKing[0] + "," + posWhiteKing[1]);
+        Log.d("Debug", "Black King pos: " + posBlackKing[0] + "," + posBlackKing[1]);
         ArrayList<String> legalMoves = new ArrayList<>();
 
         ChessPiece chessPiece = getTile(row, column).getPiece();
@@ -157,7 +174,7 @@ public class Board {
                     // Checking if this tile contains a piece
                     if(tile.hasPiece()){
                         // Checking if this piece is an allied piece
-                        if(tile.getPiece().getColor().equals(chessPiece.getColor())){
+                        if(tile.getPiece().isWhite() == chessPiece.isWhite()){
                             break;
                         } else {
                             // Simulate move and check if it is a legal state
@@ -191,7 +208,7 @@ public class Board {
                         }
 
                         // Checking if this piece is an enemy piece
-                        if(!tile.getPiece().getColor().equals(chessPiece.getColor())){
+                        if(tile.getPiece().isWhite() != chessPiece.isWhite()){
                             if(!(chessPiece instanceof Pawn)){
                                 // Simulate move and check if it is a legal state
                                 if(isLegalMove(row, column, newRow, newColumn)){
@@ -218,7 +235,7 @@ public class Board {
 
             Tile tile = getTile(newRow, newColumn);
             // Checking if this tile exists and contains enemy piece
-            if (tile != null && tile.hasPiece() && !tile.getPiece().getColor().equals(chessPiece.getColor())) {
+            if (tile != null && tile.hasPiece() && tile.getPiece().isWhite() != chessPiece.isWhite()) {
 
                 // Simulate move and check if it is a legal state
                 if(isLegalMove(row, column, newRow, newColumn)){
@@ -237,47 +254,24 @@ public class Board {
      * @return
      */
     private boolean isLegalMove(int oldRow, int oldColumn, int newRow, int newColumn) {
-        String pieceColor = getTile(oldRow, oldColumn).getPiece().getColor();
+        boolean isWhite = getTile(oldRow, oldColumn).getPiece().isWhite();
 
         // Simulating move
         ChessPiece removedPiece = getTile(newRow, newColumn).removePiece();
         setPiece(newRow, newColumn, getTile(oldRow, oldColumn).getPiece());
         setPiece(oldRow, oldColumn, null);
 
-        // Updating position of the king
-        if(getTile(newRow, newColumn).getPiece() instanceof King){
-            if(getTile(newRow, newColumn).getPiece().getColor().equals("black")){
-                posBlackKing[0] = newRow;
-                posBlackKing[1] = newColumn;
-            } else {
-                posWhiteKing[0] = newRow;
-                posWhiteKing[1] = newColumn;
-            }
-        }
-
         boolean isLegal;
 
         // Checking if allied king is attacked after the move
-        if(pieceColor.equals("black")){
-            isLegal = !isKingAttacked(posBlackKing);
-        } else {
+        if(isWhite){
             isLegal = !isKingAttacked(posWhiteKing);
+        } else {
+            isLegal = !isKingAttacked(posBlackKing);
         }
         // Resetting the board
         setPiece(oldRow, oldColumn, getTile(newRow, newColumn).removePiece());
         setPiece(newRow, newColumn, removedPiece);
-
-        // Resetting the position of the king if it was moved
-        if(getTile(oldRow, oldColumn).getPiece() instanceof King){
-
-            if(getTile(oldRow, oldColumn).getPiece().getColor().equals("black")){
-                posBlackKing[0] = oldRow;
-                posBlackKing[1] = oldColumn;
-            } else {
-                posWhiteKing[0] = oldRow;
-                posWhiteKing[1] = oldColumn;
-            }
-        }
 
         return isLegal;
     }
@@ -291,7 +285,7 @@ public class Board {
         int kingRow = kingPos[0];
         int kingColumn = kingPos[1];
 
-        String kingColor = getTile(kingRow, kingColumn).getPiece().getColor();
+        boolean isKingWhite = getTile(kingRow, kingColumn).getPiece().isWhite();
 
         // Checking all tiles in the chess board
         for (int pieceRow = 0; pieceRow < 8; pieceRow++) {
@@ -300,9 +294,9 @@ public class Board {
 
                 if (getTile(pieceRow, pieceColumn).hasPiece()) {
                     // If piece in this tile has different color than kingColor, check if it attacks the king
-                    if (!kingColor.equals(getTile(pieceRow, pieceColumn).getPiece().getColor())) {
+                    if (isKingWhite  != getTile(pieceRow, pieceColumn).getPiece().isWhite()) {
 
-                        if(pieceAttacksKing(getTile(pieceRow, pieceColumn).getPiece(), pieceRow, pieceColumn, kingRow, kingColumn)){
+                        if(pieceAttacksKing(pieceRow, pieceColumn, kingRow, kingColumn)){
                             return true;
                         }
                     }
@@ -315,12 +309,12 @@ public class Board {
     /** Checking if this piece attacks the opponents king
      * @param pieceRow The row of the piece to be checked if it attacks the king
      * @param pieceColumn The column of the piece to be checked if it attacks the king
-     * @param piece The kind of piece in this position
      * @param kingRow The row for which the king is in
      * @param kingColumn The column for which the king is in
      * @return true if the piece attacks the king, else false
      */
-    private boolean pieceAttacksKing(ChessPiece piece, int pieceRow, int pieceColumn, int kingRow, int kingColumn) {
+    private boolean pieceAttacksKing(int pieceRow, int pieceColumn, int kingRow, int kingColumn) {
+        ChessPiece piece = getTile(pieceRow, pieceColumn).getPiece();
         ArrayList<Move> legalMoves = piece.getLegalMoves();
         ArrayList<Move> captureMoves = piece.getCaptureMoves();
 
@@ -330,15 +324,16 @@ public class Board {
 
                 if(tile != null && tile.hasPiece()) {
 
-                        if (!tile.getPiece().getColor().equals(piece.getColor())) {
+                    // Checking if this tile contains a piece of the opposite color
+                    if (tile.getPiece().isWhite() != piece.isWhite()) {
 
-                            if (pieceRow + move.getRowOffset() == kingRow && pieceColumn + move.getColumnOffset() == kingColumn) {
-                                // Piece attacks the king
-                                return true;
-                            }
+                        if (pieceRow + move.getRowOffset() == kingRow && pieceColumn + move.getColumnOffset() == kingColumn) {
+                            // Piece attacks the king
+                            return true;
                         }
                     }
                 }
+            }
         } else {
             for (Move move : legalMoves) {
                 int row = pieceRow + move.getRowOffset();
@@ -372,7 +367,8 @@ public class Board {
                     }
 
                 } else if(tile != null && tile.hasPiece()){
-                    if(!tile.getPiece().getColor().equals(piece.getColor())){
+                    // Checking if pieces have different colors
+                    if(tile.getPiece().isWhite() != piece.isWhite()){
 
                         if(row == kingRow && column == kingColumn){
                             // Piece attacks the king
@@ -393,6 +389,7 @@ public class Board {
     private String insertColor(int row, int column) {
         return colors[(row+column)%2];
     }
+
 
 
     /** Sets the colors for the chess board. The strings should be hexadecimals #XXXXXX

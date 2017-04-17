@@ -8,7 +8,7 @@ import java.util.ArrayList;
 public interface Piece {
     String getType();
     Sprite getSprite();
-    String getColor();
+    boolean isWhite();
     ArrayList<Move> getLegalMoves();
     ArrayList<Move> getCaptureMoves();
     boolean isAlive();
