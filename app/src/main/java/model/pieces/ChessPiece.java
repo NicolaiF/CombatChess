@@ -53,7 +53,7 @@ public abstract class ChessPiece implements Piece {
     }
 
     @Override
-    public void setStyle(Sprite sprite) {this.sprite = sprite;}
+    public void setSprite(Sprite sprite) {this.sprite = sprite;}
 
     @Override
     public String toString(){

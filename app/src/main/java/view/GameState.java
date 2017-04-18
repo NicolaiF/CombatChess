@@ -2,6 +2,10 @@ package view;
 
 import controller.ChessBoardController;
 import main.R;
+import model.Board;
+import model.ImageButton;
+import model.factories.ClassicFillFactory;
+import model.factories.ClassicWoodFactory;
 import model.pieces.ChessPiece;
 import sheep.game.Game;
 import sheep.game.Sprite;
@@ -19,19 +23,30 @@ import android.view.WindowManager;
 import java.util.ArrayList;
 
 import sheep.graphics.Image;
+import sheep.gui.Container;
 
 public class GameState extends State {
 
     private ChessBoardController controller;
+    private Container buttonContainer;
     private Sprite chessBoard;
-    private int[] posSelectedPiece;
+
     private ChessPiece piece;
+    private int[] posSelectedPiece;
+    private ArrayList<String> legalMoves;
+
+    private ImageButton buttonClassicFillStyle;
+    private ImageButton buttonClassicWoodStyle;
+
+    private boolean whiteTurn;
+
     private int screenWidth;
     private int screenHeight;
+    private int leftMargin = 100;
+    private int topMargin = 100;
+
     private float pieceWidth;
     private float scale;
-    private boolean whiteTurn;
-    private ArrayList<String> legalMoves;
 
 
     public GameState(Game game, final ChessBoardController controller){
@@ -58,10 +73,52 @@ public class GameState extends State {
 
         // Scaled width of the chess pieces
         pieceWidth = new Image(R.drawable.classic_fill_black_pawn).getWidth() * scale;
+
+        // Creating buttons
+        createButtons();
+    }
+
+    private void createButtons() {
+        buttonContainer = new Container();
+
+        Image imageClassicFillStyle = new Image(R.drawable.classic_fill_white_pawn);
+        Image imageClassicWoodStyle = new Image(R.drawable.classic_wood_white_pawn);
+
+        buttonClassicFillStyle = new ImageButton(imageClassicFillStyle, leftMargin, topMargin, screenWidth / (imageClassicFillStyle.getWidth() * 8)) {
+            @Override
+            public boolean onTouchDown(MotionEvent motionEvent) {
+                Log.d("Debug", "Classic fill style button clicked: " + getBoundingBox().contains(motionEvent.getX(), motionEvent.getY()));
+                if (getBoundingBox().contains(motionEvent.getX(), motionEvent.getY())) {
+                    controller.setPieceFactory(new ClassicFillFactory());
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        };
+        buttonClassicWoodStyle = new ImageButton(imageClassicWoodStyle, buttonClassicFillStyle.getX() + buttonClassicFillStyle.getWidth(), topMargin, screenWidth / (imageClassicFillStyle.getWidth() * 8)) {
+            @Override
+            public boolean onTouchDown(MotionEvent motionEvent) {
+                Log.d("Debug", "Classic wood style button clicked: " + getBoundingBox().contains(motionEvent.getX(), motionEvent.getY()));
+                if (getBoundingBox().contains(motionEvent.getX(), motionEvent.getY())) {
+                    controller.setPieceFactory(new ClassicWoodFactory());
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        };
+
+        buttonContainer.addWidget(buttonClassicFillStyle);
+        buttonContainer.addWidget(buttonClassicWoodStyle);
     }
 
     @Override
     public boolean onTouchDown(MotionEvent motionEvent) {
+
+        // Checking if a button is clicked
+        buttonContainer.onTouchDown(motionEvent);
+
         int column = (int) (motionEvent.getX()/pieceWidth);
         int row = (int) ((motionEvent.getY()-(screenHeight-screenWidth)/2)/pieceWidth);
 
@@ -120,6 +177,10 @@ public class GameState extends State {
     @Override
     public void draw(Canvas canvas){
         canvas.drawColor(Color.GRAY);
+
+        // Drawing buttons
+        buttonContainer.draw(canvas);
+
         chessBoard.update(0);
         chessBoard.draw(canvas);
 

@@ -1,5 +1,6 @@
 package controller;
 
+import interfaces.AbstractPieceFactory;
 import model.Board;
 import model.Tile;
 import model.pieces.ChessPiece;
@@ -14,6 +15,13 @@ public class ChessBoardController {
 
     public ChessBoardController(Board board){
         this.board = board;
+    }
+
+    /** Sets a new piece factory
+     * @param pieceFactory the new factory
+     */
+    public void setPieceFactory(AbstractPieceFactory pieceFactory){
+        board.setPieceFactory(pieceFactory);
     }
 
     /** Sets if a tile is highlighted

@@ -3,10 +3,14 @@ package model;
 import android.util.Log;
 
 import interfaces.*;
-import model.factories.ClassicPieceFactory;
+import model.factories.ClassicFillFactory;
+import model.pieces.Bishop;
 import model.pieces.ChessPiece;
 import model.pieces.King;
+import model.pieces.Knight;
 import model.pieces.Pawn;
+import model.pieces.Queen;
+import model.pieces.Rook;
 import sheep.game.Sprite;
 
 import java.util.ArrayList;
@@ -17,7 +21,7 @@ public class Board {
 
     private Tile[][] board = new Tile[8][8];
     private String[] colors = new String[2];
-    private AbstractPieceFactory pieceFactory = new ClassicPieceFactory();
+    private AbstractPieceFactory pieceFactory = new ClassicFillFactory();
     private Map<String, String> intsToPositionDictionary = new HashMap<>();
     private int[] posWhiteKing;
     private int[] posBlackKing;
@@ -138,7 +142,12 @@ public class Board {
      * @return true if it has a piece, else false
      */
     public boolean hasPiece(int row, int column) {
-        return getTile(row, column).getPiece() != null;
+        Tile tile = getTile(row, column);
+        if(tile != null){
+            return tile.getPiece() != null;
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -425,8 +434,51 @@ public class Board {
         return sprite;
     }
 
+    /** Sets a new visual image for the chess board
+     * @param sprite the new image
+     */
     public void setSprite(Sprite sprite) {
         this.sprite = sprite;
+    }
+
+    /** Changes the theme on the chess pieces
+     * @param pieceFactory the new factory for piece styles
+     */
+    public void setPieceFactory(AbstractPieceFactory pieceFactory){
+        this.pieceFactory = pieceFactory;
+
+        for (Tile[] row : board) {
+
+            for (Tile tile : row) {
+                ChessPiece chessPiece = tile.getPiece();
+                // Checks if this tile contains a piece
+                if (chessPiece != null){
+                    boolean isWhite = chessPiece.isWhite();
+                    Sprite oldSprite = tile.getPiece().getSprite();
+
+                    if(chessPiece instanceof Pawn){
+                        chessPiece.setSprite(pieceFactory.createPawnSprite(isWhite));
+                    } else if(chessPiece instanceof Knight){
+                        chessPiece.setSprite(pieceFactory.createKnightSprite(isWhite));
+                    } else if(chessPiece instanceof Bishop){
+                        chessPiece.setSprite(pieceFactory.createBishopSprite(isWhite));
+                    } else if(chessPiece instanceof Queen){
+                        chessPiece.setSprite(pieceFactory.createQueenSprite(isWhite));
+                    } else if(chessPiece instanceof King){
+                        chessPiece.setSprite(pieceFactory.createKingSprite(isWhite));
+                    } else if(chessPiece instanceof Rook){
+                        chessPiece.setSprite(pieceFactory.createRookSprite(isWhite));
+                    }
+
+                    // Settings position and scaling new sprite
+                    Sprite newSprite = chessPiece.getSprite();
+                    newSprite.setOffset(0, 0);
+                    newSprite.setPosition(oldSprite.getX(), oldSprite.getY());
+                    newSprite.setScale(oldSprite.getScale());
+                    newSprite.update(0);
+                }
+            }
+        }
     }
 
     @Override

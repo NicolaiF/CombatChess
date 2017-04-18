@@ -16,6 +16,7 @@ public class ImageButton extends Widget {
     private int y;
     private BoundingBox box;
     private Image image;
+    private int width;
 
     /**
      * @param image The image for this button
@@ -67,6 +68,10 @@ public class ImageButton extends Widget {
 
     public int getHeight() {
         return (int) (image.getHeight()*scale);
+    }
+
+    public int getWidth() {
+        return (int) (image.getWidth()*scale);
     }
 
     public int getX(){

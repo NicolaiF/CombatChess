@@ -12,5 +12,5 @@ public interface Piece {
     ArrayList<Move> getLegalMoves();
     ArrayList<Move> getCaptureMoves();
     boolean isAlive();
-    void setStyle(Sprite sprite);
+    void setSprite(Sprite sprite);
 }
