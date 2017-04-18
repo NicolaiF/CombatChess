@@ -17,7 +17,6 @@ import sheep.graphics.*;
 import sheep.gui.*;
 
 public class MenuState extends State {
-
     private Sprite background;
     private Image backgroundImage;
     private int screenWidth;
@@ -58,7 +57,7 @@ public class MenuState extends State {
         Image imageNewGame = new Image(R.drawable.button_newgame);
         Image imageContinueGame = new Image(R.drawable.button_continue);
 
-        buttonNewGame = new ImageButton(imageNewGame, leftMargin, topMargin, screenWidth/(imageNewGame.getWidth()*3)){
+        buttonNewGame = new ImageButton(imageNewGame, 0, topMargin*15/10, screenWidth/(imageNewGame.getWidth()*15/10)){
             @Override
             public boolean onTouchDown(MotionEvent motionEvent){
                 Log.d("Debug", "New button clicked: " + getBoundingBox().contains(motionEvent.getX(), motionEvent.getY()));
@@ -76,7 +75,7 @@ public class MenuState extends State {
                 return true;
             }
         };
-        buttonContinueGame = new ImageButton(imageContinueGame, leftMargin, buttonNewGame.getY() + buttonNewGame.getHeight() + topMargin, screenWidth/(imageContinueGame.getWidth()*3)){
+        buttonContinueGame = new ImageButton(imageContinueGame, 0, buttonNewGame.getY() + buttonNewGame.getHeight() + 20, screenWidth/(imageContinueGame.getWidth()*15/10)){
 
             @Override
             public boolean onTouchDown(MotionEvent motionEvent) {
