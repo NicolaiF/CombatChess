@@ -16,6 +16,7 @@ import sheep.game.Game;
 import sheep.game.State;
 import view.GameState;
 import view.MenuState;
+import view.SettingState;
 
 public class MainActivity extends Activity {
     private Game game;
@@ -27,8 +28,13 @@ public class MainActivity extends Activity {
         Window window = getWindow();
         game = new Game(this, null);
         menuState = new MenuState(game);
-        game.pushState(menuState);
         setContentView(game);
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+        game.pushState(menuState);
     }
 
     /**
@@ -37,17 +43,17 @@ public class MainActivity extends Activity {
      */
     @Override
     public void onBackPressed() {
-        try{
+        game.popState();
+        if(game.getPreviousState() == null){
+            super.onBackPressed();
+        }
+    }
+
+    @Override
+    public void onPause(){
+        super.onPause();
+        while (game.getPreviousState() != null){
             game.popState();
-
-        } catch (EmptyStackException e){
-            Log.d("Debug", e.toString());
-
-            // Close the app
-            Intent intent = new Intent(Intent.ACTION_MAIN);
-            intent.addCategory(Intent.CATEGORY_HOME);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(intent);
         }
     }
 }
