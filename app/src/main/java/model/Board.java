@@ -260,7 +260,7 @@ public class Board {
      * @param oldColumn horizontal index in the board
      * @param newRow new row for piece to be moved
      * @param newColumn new column for piece to be moved
-     * @return
+     * @return true if legal, else false
      */
     private boolean isLegalMove(int oldRow, int oldColumn, int newRow, int newColumn) {
         boolean isWhite = getTile(oldRow, oldColumn).getPiece().isWhite();
@@ -313,6 +313,36 @@ public class Board {
             }
         }
         return false;
+    }
+
+    /** Checking if this state is check mate
+     * @param whiteMoved the color of the piece that was last moved
+     * @return true if check mate, else false
+     */
+    public boolean isCheckMate(boolean whiteMoved){
+
+        boolean isCheckMate = true;
+
+        for (int row = 0; row < 8; row++) {
+
+            for (int column = 0; column < 8; column++) {
+                Tile tile = getTile(row, column);
+                // Checking if this tile contains a piece
+                if(tile.hasPiece()){
+                    boolean isPieceWhite = tile.getPiece().isWhite();
+                    // Checking if this piece has different color than the piece that was last moved
+                    if(whiteMoved != isPieceWhite){
+
+                        if(!getLegalMoves(row, column).isEmpty()){
+                            // The opponent still has legal moves. I.e. no check mate
+                            isCheckMate = false;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        return isCheckMate;
     }
 
     /** Checking if this piece attacks the opponents king

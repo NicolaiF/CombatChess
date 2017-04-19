@@ -30,6 +30,7 @@ public class GameState extends State {
     private ChessBoardController controller;
     private Container buttonContainer;
     private Sprite chessBoard;
+    private Sprite table;
 
     private ChessPiece piece;
     private int[] posSelectedPiece;
@@ -37,6 +38,8 @@ public class GameState extends State {
 
     private ImageButton buttonClassicFillStyle;
     private ImageButton buttonClassicWoodStyle;
+    private ImageButton buttonBack;
+    private ImageButton buttonSettings;
 
     private boolean whiteTurn;
 
@@ -63,19 +66,33 @@ public class GameState extends State {
         screenWidth = size.x;
         screenHeight = size.y;
 
+        // Creating sprites
+        createSprites();
+
+        // Creating buttons
+        createButtons();
+    }
+
+    private void createSprites() {
         // Setting the chess board sprite
-        final Image boardImage = new Image(R.drawable.wood_board);
+        Image boardImage = new Image(R.drawable.wood_board);
         chessBoard = new Sprite(boardImage);
         scale = screenWidth/boardImage.getWidth();
         chessBoard.setScale(scale, scale);
         chessBoard.setOffset(0, 0);
         chessBoard.setPosition(0, (screenHeight-screenWidth)/2);
 
+        // Setting the table sprite
+        Image tableImage = new Image(R.drawable.wood_texture);
+        float tableScale = screenWidth/tableImage.getWidth();
+        table = new Sprite(tableImage);
+        table.setScale(tableScale,tableScale);
+        table.setOffset(0, 0);
+        // Placing the table in the middle under the chess board
+        table.setPosition(0, chessBoard.getY() - (tableImage.getHeight()*tableScale - boardImage.getHeight()*scale)/2);
+
         // Scaled width of the chess pieces
         pieceWidth = new Image(R.drawable.classic_fill_black_pawn).getWidth() * scale;
-
-        // Creating buttons
-        createButtons();
     }
 
     private void createButtons() {
@@ -83,6 +100,10 @@ public class GameState extends State {
 
         Image imageClassicFillStyle = new Image(R.drawable.classic_fill_white_pawn);
         Image imageClassicWoodStyle = new Image(R.drawable.classic_wood_white_pawn);
+        Image imageBack = new Image(R.drawable.white_back);
+        Image imageSettings = new Image(R.drawable.white_gear);
+
+        float scaleButtons = screenWidth/(imageClassicFillStyle.getWidth() * 8);
 
         buttonClassicFillStyle = new ImageButton(imageClassicFillStyle, leftMargin, topMargin, screenWidth / (imageClassicFillStyle.getWidth() * 8)) {
             @Override
@@ -108,9 +129,33 @@ public class GameState extends State {
                 }
             }
         };
+        buttonBack = new ImageButton(imageBack, 0, (int) (table.getY() - imageBack.getHeight()*scaleButtons), scaleButtons) {
+            @Override
+            public boolean onTouchDown(MotionEvent motionEvent) {
+                if (getBoundingBox().contains(motionEvent.getX(), motionEvent.getY())) {
+                    getGame().popState();
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        };
+        buttonSettings = new ImageButton(imageSettings, (int) (screenWidth -  imageSettings.getWidth()*scaleButtons), (int) (table.getY() - imageSettings.getHeight()*scaleButtons), scaleButtons) {
+            @Override
+            public boolean onTouchDown(MotionEvent motionEvent) {
+                if (getBoundingBox().contains(motionEvent.getX(), motionEvent.getY())) {
+                    getGame().pushState(new SettingState(getGame()));
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        };
 
         buttonContainer.addWidget(buttonClassicFillStyle);
         buttonContainer.addWidget(buttonClassicWoodStyle);
+        buttonContainer.addWidget(buttonBack);
+        buttonContainer.addWidget(buttonSettings);
     }
 
     @Override
@@ -176,12 +221,15 @@ public class GameState extends State {
 
     @Override
     public void draw(Canvas canvas){
-        canvas.drawColor(Color.GRAY);
+        canvas.drawColor(Color.DKGRAY);
 
         // Drawing buttons
         buttonContainer.draw(canvas);
 
+        // Drawing sprites
+        table.update(0);
         chessBoard.update(0);
+        table.draw(canvas);
         chessBoard.draw(canvas);
 
         for (int row = 0; row < 8; row++) {

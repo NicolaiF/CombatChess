@@ -24,7 +24,7 @@ public abstract class PieceFactory implements AbstractPieceFactory {
 
     @Override
     public Piece createKnight(boolean isWhite) {
-        return new Knight(createRookSprite(isWhite), isWhite);
+        return new Knight(createKnightSprite(isWhite), isWhite);
     }
 
     @Override
