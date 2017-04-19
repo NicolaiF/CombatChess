@@ -103,29 +103,6 @@ public class Board {
         }
     }
 
-    /** Adds a chess piece in this position of the chess board. The method must find the correct tile and add the
-     * chess piece to the tile
-     * @param row vertical index in the board
-     * @param column horizontal index in the board
-     * @param chessPiece The chess piece to be added
-     */
-    public void setPiece(int row, int column, ChessPiece chessPiece) {
-        getTile(row, column).setPiece(chessPiece);
-
-        // Updating position of the king
-        if(chessPiece instanceof King){
-            if(chessPiece.isWhite()){
-                Log.d("Debug", "White king moved");
-                posWhiteKing[0] = row;
-                posWhiteKing[1] = column;
-                Log.d("Debug", "White king pos: " + posWhiteKing[0] + "," + posWhiteKing[1]);
-            } else {
-                posBlackKing[0] = row;
-                posBlackKing[1] = column;
-            }
-        }
-    }
-
     /** Adds a power up in this position on the chess board. The method must find the correct tile and add the power
      * up to the tile
      * @param row vertical index in the board
@@ -267,8 +244,8 @@ public class Board {
 
         // Simulating move
         ChessPiece removedPiece = getTile(newRow, newColumn).removePiece();
-        setPiece(newRow, newColumn, getTile(oldRow, oldColumn).getPiece());
-        setPiece(oldRow, oldColumn, null);
+        setPiece(newRow, newColumn, getTile(oldRow, oldColumn).getPiece(), true);
+        setPiece(oldRow, oldColumn, null, true);
 
         boolean isLegal;
 
@@ -279,10 +256,43 @@ public class Board {
             isLegal = !isKingAttacked(posBlackKing);
         }
         // Resetting the board
-        setPiece(oldRow, oldColumn, getTile(newRow, newColumn).removePiece());
-        setPiece(newRow, newColumn, removedPiece);
+        setPiece(oldRow, oldColumn, getTile(newRow, newColumn).removePiece(), true);
+        setPiece(newRow, newColumn, removedPiece, true);
 
         return isLegal;
+    }
+
+    /** Adds a chess piece in this position of the chess board. The method must find the correct tile and add the
+     * chess piece to the tile
+     * @param row vertical index in the board
+     * @param column horizontal index in the board
+     * @param chessPiece The chess piece to be added
+     * @param simulation Differs behavior whether it is a move or a simulation
+     */
+    public void setPiece(int row, int column, ChessPiece chessPiece, boolean simulation) {
+        if(!simulation){
+            if(chessPiece instanceof Pawn){
+                ((Pawn) chessPiece).moved();
+                if(chessPiece.isWhite() && row == 0)
+                    chessPiece = (ChessPiece) pieceFactory.createQueen(true);
+                if(!chessPiece.isWhite() && row == 7)
+                    chessPiece = (ChessPiece) pieceFactory.createQueen(false);
+            }
+        }
+        getTile(row, column).setPiece(chessPiece);
+
+        // Updating position of the king
+        if(chessPiece instanceof King){
+            if(chessPiece.isWhite()){
+                Log.d("Debug", "White king moved");
+                posWhiteKing[0] = row;
+                posWhiteKing[1] = column;
+                Log.d("Debug", "White king pos: " + posWhiteKing[0] + "," + posWhiteKing[1]);
+            } else {
+                posBlackKing[0] = row;
+                posBlackKing[1] = column;
+            }
+        }
     }
 
     /** Checking if king is under attack

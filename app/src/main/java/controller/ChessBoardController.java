@@ -4,8 +4,6 @@ import interfaces.AbstractPieceFactory;
 import model.Board;
 import model.Tile;
 import model.pieces.ChessPiece;
-import model.Player;
-import model.pieces.Pawn;
 
 import java.util.ArrayList;
 
@@ -62,12 +60,7 @@ public class ChessBoardController {
 
         if (legalMoves.contains(newPos)) {
             ChessPiece chessPiece = board.getTile(oldRow, oldColumn).removePiece();
-            board.setPiece(newRow, newColumn, chessPiece);
-
-            if (chessPiece instanceof Pawn) {
-                Pawn pawn = (Pawn) chessPiece;
-                pawn.moved();
-            }
+            board.setPiece(newRow, newColumn, chessPiece, false);
             return true;
         }
         return false;
