@@ -15,10 +15,10 @@ import model.ImageButton;
 import sheep.game.*;
 import sheep.graphics.*;
 import sheep.gui.*;
+import sheep.math.Vector2;
 
 public class MenuState extends State {
     private Sprite background;
-    private Image backgroundImage;
     private int screenWidth;
     private int screenHeight;
     private int leftMargin = 100;
@@ -31,9 +31,45 @@ public class MenuState extends State {
 
     public MenuState(Game game){
         setGame(game);
-        backgroundImage = new Image(R.drawable.background_1);
+
+        // Getting size of the screen
+        collectScreenData();
+
+        // Creating sprites
+        createSprites();
+
+        // Creating buttons
+        createButtons();
+    }
+
+    private void createSprites() {
+
+        // Getting the images for the sprites
+        Image backgroundImage = new Image(R.drawable.background_1);
+
+        // Getting the sprites
         background = new Sprite(backgroundImage);
 
+        // Calculating the scales
+        float bgScale = screenWidth/backgroundImage.getWidth();
+
+        // Adjusting the background
+        adjustSprite(background, new Vector2(bgScale, bgScale), new Vector2(0,0), new Vector2(0,0));
+    }
+
+    /** Adjust the sprite
+     * @param sprite the sprite to be adjusted
+     * @param scale the scale for this sprite
+     * @param offset the offset for this sprite
+     * @param position the position for this sprite
+     */
+    private void adjustSprite(Sprite sprite, Vector2 scale, Vector2 offset, Vector2 position){
+        sprite.setScale(scale);
+        sprite.setOffset(offset);
+        sprite.setPosition(position);
+    }
+
+    private void collectScreenData() {
         // Getting the size of the screen
         WindowManager wm = (WindowManager) getGame().getContext().getSystemService(Context.WINDOW_SERVICE);
         Display display = wm.getDefaultDisplay();
@@ -41,13 +77,6 @@ public class MenuState extends State {
         display.getSize(size);
         screenWidth = size.x;
         screenHeight = size.y;
-
-        // Adjusting the background
-        background.setScale(screenWidth/backgroundImage.getWidth(), screenWidth/backgroundImage.getWidth());
-        background.setOffset(0, 0);
-        background.setPosition(0, 0);
-
-        createButtons();
     }
 
     private void createButtons() {

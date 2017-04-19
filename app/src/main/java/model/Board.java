@@ -3,7 +3,9 @@ package model;
 import android.util.Log;
 
 import interfaces.*;
-import model.factories.ClassicFillFactory;
+import main.R;
+import model.factories.boards.FillFactory;
+import model.factories.pieces.ClassicFillFactory;
 import model.pieces.Bishop;
 import model.pieces.ChessPiece;
 import model.pieces.King;
@@ -12,6 +14,7 @@ import model.pieces.Pawn;
 import model.pieces.Queen;
 import model.pieces.Rook;
 import sheep.game.Sprite;
+import sheep.graphics.Image;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,15 +25,13 @@ public class Board {
     private Tile[][] board = new Tile[8][8];
     private String[] colors = new String[2];
     private AbstractPieceFactory pieceFactory = new ClassicFillFactory();
+    private AbstractBoardFactory boardFactory = new FillFactory();
     private Map<String, String> intsToPositionDictionary = new HashMap<>();
     private int[] posWhiteKing;
     private int[] posBlackKing;
-    private Sprite sprite;
+    private Sprite boardSprite;
 
     public Board(){
-        // Initializing the colors for the board to be black and white
-        colors[0] = "#000000";
-        colors[1] = "#FFFFFF";
 
         posBlackKing = new int[2];
         posWhiteKing = new int[2];
@@ -38,6 +39,7 @@ public class Board {
         generateBoard();
         generateIntsToPositionDictionary();
         placeStartingPieces();
+
     }
 
     /**
@@ -98,7 +100,7 @@ public class Board {
     private void generateBoard() {
         for(int i = 0; i<8; i++){
             for(int j = 0; j<8; j++){
-                board[i][j] = new Tile(insertColor(i,j));
+                board[i][j] = new Tile();
             }
         }
     }
@@ -430,17 +432,6 @@ public class Board {
         return  false;
     }
 
-    /** Inserts color to the board
-     * @param row The row in the chess board
-     * @param column The column in the chess board
-     * @return the color for this tile
-     */
-    private String insertColor(int row, int column) {
-        return colors[(row+column)%2];
-    }
-
-
-
     /** Sets the colors for the chess board. The strings should be hexadecimals #XXXXXX
      * @param firstColor The color for A8, C8, ...
      * @param secondColor The color for B8, D8, ...
@@ -467,18 +458,6 @@ public class Board {
      */
     public Tile[][] getTiles(){
         return  board;
-    }
-
-
-    public Sprite getSprite() {
-        return sprite;
-    }
-
-    /** Sets a new visual image for the chess board
-     * @param sprite the new image
-     */
-    public void setSprite(Sprite sprite) {
-        this.sprite = sprite;
     }
 
     /** Changes the theme on the chess pieces
@@ -510,7 +489,7 @@ public class Board {
                         chessPiece.setSprite(pieceFactory.createRookSprite(isWhite));
                     }
 
-                    // Settings position and scaling new sprite
+                    // Setting position and scaling new sprite
                     Sprite newSprite = chessPiece.getSprite();
                     newSprite.setOffset(0, 0);
                     newSprite.setPosition(oldSprite.getX(), oldSprite.getY());
@@ -519,6 +498,32 @@ public class Board {
                 }
             }
         }
+    }
+
+    public void setBoardFactory(AbstractBoardFactory boardFactory) {
+        this.boardFactory = boardFactory;
+        Sprite oldSprite = boardSprite;
+
+        // Setting position and scaling new sprite
+        Sprite newSprite = boardFactory.createBoardSprite();
+        newSprite.setOffset(0, 0);
+        newSprite.setPosition(oldSprite.getX(), oldSprite.getY());
+        newSprite.setScale(oldSprite.getScale());
+        newSprite.update(0);
+
+        boardSprite = newSprite;
+    }
+
+    public AbstractPieceFactory getPieceFactory() {
+        return pieceFactory;
+    }
+
+    public AbstractBoardFactory getBoardFactory() {
+        return boardFactory;
+    }
+
+    public Sprite getBoardSprite(){
+        return boardSprite;
     }
 
     @Override
@@ -531,5 +536,9 @@ public class Board {
             string += "\n";
         }
         return string;
+    }
+
+    public void setBoardSprite(Sprite boardSprite) {
+        this.boardSprite = boardSprite;
     }
 }

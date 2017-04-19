@@ -1,4 +1,4 @@
-package model.factories;
+package model.factories.pieces;
 
 import main.R;
 import sheep.game.Sprite;

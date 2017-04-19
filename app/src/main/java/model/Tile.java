@@ -19,8 +19,7 @@ public class Tile {
      * Creates a new Tile on the chess board
      * @param color The color for this tile
      */
-    public Tile(String color){
-        this.color = color;
+    public Tile(){
         highlightSprite = new Sprite(new Image(R.drawable.highlight_babyblue));
     }
 

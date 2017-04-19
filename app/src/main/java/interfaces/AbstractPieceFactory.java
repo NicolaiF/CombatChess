@@ -1,6 +1,7 @@
 package interfaces;
 
 import sheep.game.Sprite;
+import sheep.graphics.Image;
 
 public interface AbstractPieceFactory {
     Piece createPawn(boolean isWhite);
@@ -16,4 +17,6 @@ public interface AbstractPieceFactory {
     Sprite createBishopSprite(boolean isWhite);
     Sprite createQueenSprite(boolean isWhite);
     Sprite createKingSprite(boolean isWhite);
+
+    Image getSampleImage();
 }

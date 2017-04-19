@@ -1,9 +1,11 @@
 package controller;
 
+import interfaces.AbstractBoardFactory;
 import interfaces.AbstractPieceFactory;
 import model.Board;
 import model.Tile;
 import model.pieces.ChessPiece;
+import sheep.game.Sprite;
 
 import java.util.ArrayList;
 
@@ -13,13 +15,6 @@ public class ChessBoardController {
 
     public ChessBoardController(Board board){
         this.board = board;
-    }
-
-    /** Sets a new piece factory
-     * @param pieceFactory the new factory
-     */
-    public void setPieceFactory(AbstractPieceFactory pieceFactory){
-        board.setPieceFactory(pieceFactory);
     }
 
     /** Sets if a tile is highlighted
@@ -47,6 +42,7 @@ public class ChessBoardController {
         }
         return new ArrayList<>();
     }
+
     /** Moves a piece from one tile to another
      * @param oldRow vertical index
      * @param oldColumn horizontal index
@@ -65,7 +61,6 @@ public class ChessBoardController {
         }
         return false;
     }
-
     /** Returns the piece in this position. Null if none
      * @param row vertical index
      * @param column horizontal index
@@ -109,5 +104,32 @@ public class ChessBoardController {
      */
     public boolean isTileHighlighted(int row, int column) {
         return getTile(row, column).isHighlighted();
+    }
+
+    /** Sets a new piece factory
+     * @param pieceFactory the new factory
+     */
+    public void setPieceFactory(AbstractPieceFactory pieceFactory){
+        board.setPieceFactory(pieceFactory);
+    }
+
+    public void setBoardFactory(AbstractBoardFactory boardFactory){
+        board.setBoardFactory(boardFactory);
+    }
+
+    public AbstractBoardFactory getBoardFactory(){
+        return board.getBoardFactory();
+    }
+
+    public AbstractPieceFactory getPieceFactory(){
+        return board.getPieceFactory();
+    }
+
+    public Sprite getBoardSprite(){
+        return board.getBoardSprite();
+    }
+
+    public void setBoardSprite(Sprite boardSprite) {
+        board.setBoardSprite(boardSprite);
     }
 }
