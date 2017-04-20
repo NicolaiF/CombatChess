@@ -188,13 +188,6 @@ public class Board {
                 if(tile != null){
                     // Checking if this tile contains a piece that is not an ally
                     if(tile.hasPiece()){
-
-                        // Stop iteration if piece is a pawn
-                        if(getTile(row, column).getPiece() instanceof Pawn) {
-                            moves.clear();
-                            break;
-                        }
-
                         // Checking if this piece is an enemy piece
                         if(tile.getPiece().isWhite() != chessPiece.isWhite()){
                             if(!(chessPiece instanceof Pawn)){
@@ -202,6 +195,10 @@ public class Board {
                                 if(isLegalMove(row, column, newRow, newColumn)){
                                     legalMoves.add(newRow + "," + newColumn);
                                 }
+                            }
+                            // Stop iteration and do not add legal move if piece is a pawn
+                            else {
+                                break;
                             }
                         }
                     } else {
