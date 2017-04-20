@@ -1,7 +1,5 @@
 package controller;
 
-import android.graphics.Canvas;
-
 import interfaces.AbstractBoardFactory;
 import interfaces.AbstractPieceFactory;
 import model.Board;
@@ -15,6 +13,7 @@ import java.util.ArrayList;
 public class ChessBoardController {
 
     private Board board;
+    private ChessPiece lastCapturedPiece;
 
     public ChessBoardController(Board board){
         this.board = board;
@@ -59,6 +58,13 @@ public class ChessBoardController {
 
         if (legalMoves.contains(newPos)) {
             ChessPiece chessPiece = board.getTile(oldRow, oldColumn).removePiece();
+
+            // Updating last piece captured
+            ChessPiece removedPiece = board.getTile(newRow, newColumn).removePiece();
+            if(removedPiece != null){
+                lastCapturedPiece = removedPiece;
+            }
+
             board.setPiece(newRow, newColumn, chessPiece, false);
             return true;
         }
@@ -130,6 +136,10 @@ public class ChessBoardController {
 
     public Sprite getBoardSprite(){
         return board.getBoardSprite();
+    }
+
+    public ChessPiece getLastCapturedPiece() {
+        return lastCapturedPiece;
     }
 
     public void setBoardSprite(Sprite boardSprite) {

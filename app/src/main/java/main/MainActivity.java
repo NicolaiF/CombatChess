@@ -43,6 +43,9 @@ public class MainActivity extends Activity {
      */
     @Override
     public void onBackPressed() {
+        if(game.getPreviousState() instanceof GameState){
+            ((GameState) game.getPreviousState()).updateTimer();
+        }
         game.popState();
         if(game.getPreviousState() == null){
             super.onBackPressed();

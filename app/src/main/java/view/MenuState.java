@@ -110,6 +110,7 @@ public class MenuState extends State {
             public boolean onTouchDown(MotionEvent motionEvent) {
                 Log.d("Debug", "Continue button clicked: " + getBoundingBox().contains(motionEvent.getX(), motionEvent.getY()));
                 if (getBoundingBox().contains(motionEvent.getX(), motionEvent.getY()) && savedGameState != null) {
+                    savedGameState.updateTimer();
                     getGame().pushState(savedGameState);
                     return true;
                 } else {

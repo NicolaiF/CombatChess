@@ -11,17 +11,23 @@ import sheep.game.State;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.Point;
+import android.graphics.Typeface;
 import android.util.Log;
 import android.view.Display;
 import android.view.MotionEvent;
 import android.view.WindowManager;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 
+import sheep.graphics.Font;
 import sheep.graphics.Image;
 import sheep.gui.Container;
+import sheep.gui.TextButton;
 import sheep.math.Vector2;
+import sheep.util.Timer;
 
 public class GameState extends State {
 
@@ -41,7 +47,19 @@ public class GameState extends State {
     private int topMargin = 100;
 
     private float pieceWidth;
+    private float boardHeight;
+    private float tableHeight;
     private float pieceScale;
+
+    private Timer timer;
+    private float startTime = 60*10;
+    private float whiteTime = startTime;
+    private float blackTime = startTime;
+    private TextButton txtWhiteTime;
+    private TextButton txtBlackTime;
+
+    private ArrayList<ChessPiece> whiteCaptures = new ArrayList<>();
+    private ArrayList<ChessPiece> blackCaptures = new ArrayList<>();
 
 
     public GameState(Game game, ChessBoardController controller){
@@ -56,8 +74,20 @@ public class GameState extends State {
         // Creating sprites
         createSprites();
 
+        // Creating timers
+        createTimers();
+
         // Creating buttons
         createButtons();
+    }
+
+    private void createTimers() {
+        timer = new Timer();
+
+        Paint paint = new Paint();
+        Font font = new Font(255, 255, 255, pieceWidth/2, Typeface.DEFAULT, Typeface.BOLD);
+        txtBlackTime = new TextButton(screenWidth/2 - paint.measureText("00:00"), table.getY() - pieceWidth, "", new Paint[]{font, font});
+        txtWhiteTime = new TextButton(screenWidth/2 - paint.measureText("00:00"), table.getY() + tableHeight + pieceWidth, "", new Paint[]{font, font});
     }
 
     private void createSprites() {
@@ -73,7 +103,11 @@ public class GameState extends State {
         pieceScale = screenWidth/boardImage.getWidth();
         float tableScale = screenWidth/tableImage.getWidth();
 
+        // Calculating widths and heights
         pieceWidth = new Image(R.drawable.classic_fill_black_pawn).getWidth() * pieceScale;
+        boardHeight = boardImage.getHeight()*pieceScale;
+        tableHeight = tableImage.getHeight()*tableScale;
+        Log.d("Debug", "Table Height = " + tableHeight);
 
         // Adjusting the sprites
         controller.adjustSprite(chessBoard, new Vector2(pieceScale, pieceScale), new Vector2(0, 0), new Vector2(0, (float) (screenHeight-screenWidth)/2));
@@ -88,7 +122,7 @@ public class GameState extends State {
         Image imageBack = new Image(R.drawable.white_back);
         Image imageSettings = new Image(R.drawable.white_gear);
 
-        float scaleButtons = screenWidth/(imageBack.getWidth() * 8);
+        float scaleButtons = screenWidth/(imageBack.getWidth() * 10);
 
         ImageButton buttonBack = new ImageButton(imageBack, 0, (int) (table.getY() - imageBack.getHeight()*scaleButtons), scaleButtons) {
             @Override
@@ -127,6 +161,81 @@ public class GameState extends State {
         screenHeight = size.y;
     }
 
+    private void addCapturedPiece() {
+        // Checking if new piece was captured
+        ChessPiece capturedPiece = controller.getLastCapturedPiece();
+        if(capturedPiece != null){
+            if(capturedPiece.isWhite()){
+                if(!blackCaptures.contains(capturedPiece)) {
+                    blackCaptures.add(capturedPiece);
+                    capturedPiece.getSprite().setPosition(blackCaptures.size()*pieceWidth/2 - pieceWidth/2 + screenWidth*0.05f, controller.getBoardSprite().getY() - pieceWidth);
+                    capturedPiece.getSprite().setOffset(0,0);
+                    capturedPiece.getSprite().update(0);
+                }
+            } else {
+                if(!whiteCaptures.contains(capturedPiece)){
+                    whiteCaptures.add(capturedPiece);
+                    capturedPiece.getSprite().setPosition(whiteCaptures.size()*pieceWidth/2 - pieceWidth/2 + + screenWidth*0.05f, controller.getBoardSprite().getY() + boardHeight);
+                    capturedPiece.getSprite().update(0);
+                }
+            }
+        }
+        Log.d("Debug", "Black captures: " + blackCaptures.toString());
+        Log.d("Debug", "White captures: " + whiteCaptures.toString());
+    }
+
+    private boolean onChessPieceSelected(int column, int row) {
+        // Updating position of selected piece
+        int[] index = new int[2];
+        index[0] = row;
+        index[1] = column;
+        posSelectedPiece = index;
+        piece = controller.getPiece(row, column);
+
+        //Remove legal moves on old legal moves
+        if(legalMoves != null)
+            controller.setHighlightedOnTiles(legalMoves, false);
+        legalMoves = controller.getLegalMoves(whiteTurn, row, column);
+        controller.setHighlightedOnTiles(legalMoves, true);
+        return true;
+    }
+
+    private synchronized void drawCapturedPieces(Canvas canvas) {
+        for (ChessPiece piece : blackCaptures) {
+            piece.getSprite().draw(canvas);
+        }
+
+        for (ChessPiece piece : whiteCaptures) {
+            piece.getSprite().draw(canvas);
+        }
+    }
+
+    private void drawPieces(Canvas canvas) {
+        for (int row = 0; row < 8; row++) {
+
+            for (int column = 0; column < 8; column++) {
+
+                if(controller.isTileHighlighted(row, column)){
+                    Sprite sprite = controller.getTile(row, column).getHighlightSprite();
+                    controller.adjustSprite(sprite, new Vector2(pieceScale, pieceScale), new Vector2(0,0), new Vector2(column * pieceWidth, (screenHeight-screenWidth)/2 + row * pieceWidth));
+                    sprite.update(0);
+                    sprite.draw(canvas);
+                }
+
+                if(controller.hasPiece(row, column)){
+                    Sprite sprite = controller.getPiece(row, column).getSprite();
+                    controller.adjustSprite(sprite, new Vector2(pieceScale, pieceScale), new Vector2(0,0), new Vector2(column * pieceWidth, (screenHeight-screenWidth)/2 + row * pieceWidth ));
+                    sprite.update(0);
+                    sprite.draw(canvas);
+                }
+            }
+        }
+    }
+
+    public void setController(ChessBoardController controller){
+        this.controller = controller;
+    }
+
     @Override
     public boolean onTouchDown(MotionEvent motionEvent) {
 
@@ -154,6 +263,9 @@ public class GameState extends State {
             newPos[0] = row;
             newPos[1] = column;
             if(controller.movePiece(legalMoves, posSelectedPiece[0], posSelectedPiece[1], newPos[0], newPos[1])){
+                // Updating captured pieces
+                addCapturedPiece();
+
                 // Move was successful other players turn
                 whiteTurn = !whiteTurn;
             }
@@ -174,25 +286,10 @@ public class GameState extends State {
         return false;
     }
 
-    private boolean onChessPieceSelected(int column, int row) {
-        // Updating position of selected piece
-        int[] index = new int[2];
-        index[0] = row;
-        index[1] = column;
-        posSelectedPiece = index;
-        piece = controller.getPiece(row, column);
-
-        //Remove legal moves on old legal moves
-        if(legalMoves != null)
-            controller.setHighlightedOnTiles(legalMoves, false);
-        legalMoves = controller.getLegalMoves(whiteTurn, row, column);
-        controller.setHighlightedOnTiles(legalMoves, true);
-        return true;
-    }
-
     @Override
     public void draw(Canvas canvas){
         canvas.drawColor(Color.DKGRAY);
+
 
         // Drawing buttons
         buttonContainer.draw(canvas);
@@ -202,29 +299,36 @@ public class GameState extends State {
         table.update(0);
         table.draw(canvas);
         controller.getBoardSprite().draw(canvas);
-
-        for (int row = 0; row < 8; row++) {
-
-            for (int column = 0; column < 8; column++) {
-
-                if(controller.isTileHighlighted(row, column)){
-                    Sprite sprite = controller.getTile(row, column).getHighlightSprite();
-                    controller.adjustSprite(sprite, new Vector2(pieceScale, pieceScale), new Vector2(0,0), new Vector2(column * pieceWidth, (screenHeight-screenWidth)/2 + row * pieceWidth));
-                    sprite.update(0);
-                    sprite.draw(canvas);
-                }
-
-                if(controller.hasPiece(row, column)){
-                    Sprite sprite = controller.getPiece(row, column).getSprite();
-                    controller.adjustSprite(sprite, new Vector2(pieceScale, pieceScale), new Vector2(0,0), new Vector2(column * pieceWidth, (screenHeight-screenWidth)/2 + row * pieceWidth ));
-                    sprite.update(0);
-                    sprite.draw(canvas);
-                }
-            }
-        }
+        drawPieces(canvas);
+        drawCapturedPieces(canvas);
+        // Drawing timers
+        updateTimeLabels();
+        txtWhiteTime.draw(canvas);
+        txtBlackTime.draw(canvas);
     }
 
-    public void setController(ChessBoardController controller){
-        this.controller = controller;
+    private void updateTimeLabels() {
+        float dt = timer.getDelta();
+
+        if (whiteTurn) whiteTime -= dt;
+        else blackTime -= dt;
+
+        String minWhite = Float.toString(whiteTime/60).split("\\.")[0];
+        String secWhite = String.valueOf(Math.round(whiteTime) - 60*Integer.parseInt(minWhite));
+        if(secWhite.equals("60")){ secWhite = "59";}
+        txtWhiteTime.setLabel(minWhite + ":" + secWhite);
+
+        String minBlack = Float.toString(blackTime/60).split("\\.")[0];
+        String secBlack = String.valueOf(Math.round(blackTime) - 60*Integer.parseInt(minBlack));
+        if(secBlack.equals("60")){ secBlack = "59";}
+        txtBlackTime.setLabel(minBlack + ":" + secBlack);
+    }
+
+    /**
+     * Use this method to update the timer. Such that the time doesn't go on as while in other states.
+     * Should be used when leaving a state and pushing game state
+     */
+    public void updateTimer(){
+        timer.getDelta();
     }
 }
