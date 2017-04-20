@@ -2,7 +2,6 @@ package view;
 
 import controller.ChessBoardController;
 import main.R;
-import model.ImageButton;
 import model.pieces.ChessPiece;
 import sheep.game.Game;
 import sheep.game.Sprite;
@@ -19,7 +18,6 @@ import android.view.Display;
 import android.view.MotionEvent;
 import android.view.WindowManager;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 
 import sheep.graphics.Font;
@@ -40,6 +38,7 @@ public class GameState extends State {
     private ArrayList<String> legalMoves;
 
     private boolean whiteTurn;
+    private boolean gameWon;
 
     private int screenWidth;
     private int screenHeight;
@@ -52,7 +51,7 @@ public class GameState extends State {
     private float pieceScale;
 
     private Timer timer;
-    private float startTime = 60*10;
+    private float startTime = 60*10; // TODO: Maybe let the user choose time
     private float whiteTime = startTime;
     private float blackTime = startTime;
     private TextButton txtWhiteTime;
@@ -272,6 +271,11 @@ public class GameState extends State {
                 // Updating captured pieces
                 addCapturedPiece();
 
+                // Checking for check mate
+                if(controller.isCheckMate(whiteTurn)){
+                    handleWin(whiteTurn);
+                }
+
                 // Move was successful other players turn
                 whiteTurn = !whiteTurn;
             }
@@ -292,13 +296,34 @@ public class GameState extends State {
         return false;
     }
 
+    /** Handles what happens when a player wins by check mate
+     * @param whiteTurn true if white player won
+     */
+    private void handleWin(boolean whiteTurn) {
+        // Creating a text box which informs the winner
+        Paint paint = new Paint();
+        int textSize = (int) pieceWidth;
+        paint.setTextSize(textSize);
+
+        Font font = new Font(255, 255, 255, textSize, Typeface.DEFAULT, Typeface.BOLD);
+        TextButton btnWin = new TextButton(screenWidth/2 - paint.measureText("White wins!")/2, screenHeight/2, whiteTurn ? "White wins!" : "Black wins!", new Paint[]{font, font}){
+            @Override
+            public boolean onTouchDown(MotionEvent motionEvent){
+                if(getBoundingBox().contains(motionEvent.getX(), motionEvent.getY())){
+                    getGame().popState();
+                    return true;
+                }
+                return false;
+            }
+        };
+        buttonContainer.addWidget(btnWin);
+
+        gameWon = true;
+    }
+
     @Override
     public void draw(Canvas canvas){
         canvas.drawColor(Color.DKGRAY);
-
-
-        // Drawing buttons
-        buttonContainer.draw(canvas);
 
         // Drawing sprites
         controller.getBoardSprite().update(0);
@@ -307,6 +332,10 @@ public class GameState extends State {
         controller.getBoardSprite().draw(canvas);
         drawPieces(canvas);
         drawCapturedPieces(canvas);
+
+        // Drawing buttons
+        buttonContainer.draw(canvas);
+
         // Drawing timers
         updateTimeLabels();
         txtWhiteTime.draw(canvas);
@@ -316,8 +345,20 @@ public class GameState extends State {
     private void updateTimeLabels() {
         float dt = timer.getDelta();
 
-        if (whiteTurn) whiteTime -= dt;
-        else blackTime -= dt;
+        if(!gameWon){
+            if (whiteTurn){
+                whiteTime -= dt;
+                if(whiteTime < 0){
+                    handleWin(!whiteTurn);
+                }
+            }
+            else {
+                blackTime -= dt;
+                if(blackTime < 0){
+                    handleWin(whiteTurn);
+                }
+            }
+        }
 
         String minWhite = Float.toString(whiteTime/60).split("\\.")[0];
         String secWhite = String.valueOf(Math.round(whiteTime) - 60*Integer.parseInt(minWhite));

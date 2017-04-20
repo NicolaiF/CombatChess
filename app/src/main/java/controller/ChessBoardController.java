@@ -59,17 +59,32 @@ public class ChessBoardController {
         if (legalMoves.contains(newPos)) {
             ChessPiece chessPiece = board.getTile(oldRow, oldColumn).removePiece();
 
-            // Updating last piece captured
-            ChessPiece removedPiece = board.getTile(newRow, newColumn).removePiece();
-            if(removedPiece != null){
-                lastCapturedPiece = removedPiece;
-            }
-
+            updateLastCapturedPiece(newRow, newColumn);
             board.setPiece(newRow, newColumn, chessPiece, false);
             return true;
         }
         return false;
     }
+
+    /** Updates the last captured piece if the last moved captured a piece
+     * @param newRow row index of last move
+     * @param newColumn column index of last move
+     */
+    private void updateLastCapturedPiece(int newRow, int newColumn) {
+        ChessPiece removedPiece = board.getTile(newRow, newColumn).removePiece();
+        if(removedPiece != null){
+            lastCapturedPiece = removedPiece;
+        }
+    }
+
+    /** Checks if this state is check mate
+     * @param whiteMoved true if white moved the last piece, else false
+     * @return true if check mate, else false
+     */
+    public boolean isCheckMate(boolean whiteMoved){
+        return board.isCheckMate(whiteMoved);
+    }
+
     /** Returns the piece in this position. Null if none
      * @param row vertical index
      * @param column horizontal index

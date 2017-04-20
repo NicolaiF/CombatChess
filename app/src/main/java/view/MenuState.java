@@ -11,7 +11,6 @@ import android.view.WindowManager;
 import controller.ChessBoardController;
 import main.R;
 import model.Board;
-import model.ImageButton;
 import sheep.game.*;
 import sheep.graphics.*;
 import sheep.gui.*;

@@ -14,7 +14,6 @@ import controller.ChessBoardController;
 import interfaces.AbstractBoardFactory;
 import interfaces.AbstractPieceFactory;
 import main.R;
-import model.ImageButton;
 import model.factories.boards.FillFactory;
 import model.factories.boards.WoodFactory;
 import model.factories.pieces.ClassicFillFactory;
