@@ -85,9 +85,15 @@ public class GameState extends State {
         timer = new Timer();
 
         Paint paint = new Paint();
+        paint.setTextSize(pieceWidth/2);
         Font font = new Font(255, 255, 255, pieceWidth/2, Typeface.DEFAULT, Typeface.BOLD);
-        txtBlackTime = new TextButton(screenWidth/2 - paint.measureText("00:00"), table.getY() - pieceWidth, "", new Paint[]{font, font});
-        txtWhiteTime = new TextButton(screenWidth/2 - paint.measureText("00:00"), table.getY() + tableHeight + pieceWidth, "", new Paint[]{font, font});
+        txtBlackTime = new TextButton(screenWidth/2 - paint.measureText("0:00")/2, table.getY() - paint.measureText("X"), "", new Paint[]{font, font});
+
+        float yPos = table.getY() + tableHeight + paint.measureText("X")*2;
+        if(yPos + paint.measureText("X") > screenHeight){
+            yPos = table.getY() + tableHeight;
+        }
+        txtWhiteTime = new TextButton(screenWidth/2 - paint.measureText("0:00")/2, yPos, "", new Paint[]{font, font});
     }
 
     private void createSprites() {
