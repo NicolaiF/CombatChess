@@ -3,7 +3,6 @@ package model;
 import android.util.Log;
 
 import interfaces.*;
-import main.R;
 import model.factories.boards.FillFactory;
 import model.factories.pieces.ClassicFillFactory;
 import model.pieces.Bishop;
@@ -14,7 +13,6 @@ import model.pieces.Pawn;
 import model.pieces.Queen;
 import model.pieces.Rook;
 import sheep.game.Sprite;
-import sheep.graphics.Image;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -147,73 +145,81 @@ public class Board {
         Log.d("Debug", "White King pos: " + posWhiteKing[0] + "," + posWhiteKing[1]);
         Log.d("Debug", "Black King pos: " + posBlackKing[0] + "," + posBlackKing[1]);
         ArrayList<String> legalMoves = new ArrayList<>();
-
         ChessPiece chessPiece = getTile(row, column).getPiece();
-        ArrayList<Move> moves = chessPiece.getLegalMoves();
+        legalMoves.addAll(findAllLegalMoves(row, column, chessPiece));
+        legalMoves.addAll(findAllCaptureMoves(row, column, chessPiece));
+        return legalMoves;
+    }
 
-        for(Move move : moves){
+    private ArrayList<String> findAllLegalMoves(int row, int column, ChessPiece chessPiece) {
+        ArrayList<String> legalMoves = new ArrayList<>();
+        ArrayList<Move> moves = chessPiece.getLegalMoves();
+        for(Move move : moves) {
             int newRow = row + move.getRowOffset();
             int newColumn = column + move.getColumnOffset();
-
-            if(move.isContinuous()){
-                Tile tile = getTile(newRow, newColumn);
-
-                while(tile != null){
-                    // Checking if this tile contains a piece
-                    if(tile.hasPiece()){
-                        // Checking if this piece is an allied piece
-                        if(tile.getPiece().isWhite() == chessPiece.isWhite()){
-                            break;
-                        } else {
-                            // Simulate move and check if it is a legal state
-                            if(isLegalMove(row, column, newRow, newColumn)){
-                                legalMoves.add(newRow + "," + newColumn);
-                            }
-                            break;
-                        }
-                    } else {
-                        // Simulate move and check if it is a legal state
-                        if(isLegalMove(row, column, newRow, newColumn)){
-                            legalMoves.add(newRow + "," + newColumn);
-                        }
-                        // Updating variables for next iteration
-                        newRow += move.getRowOffset();
-                        newColumn += move.getColumnOffset();
-                        tile = getTile(newRow, newColumn);
-                    }
+            Tile tile = getTile(newRow, newColumn);
+            if (move.isContinuous())
+                legalMoves.addAll(findAllContinuousLegalMoves(row, column, chessPiece, move, tile));
+            else {
+                // Continue if the tile does not exist
+                if (tile == null) {
+                    continue;
                 }
-            } else {
-                Tile tile = getTile(newRow, newColumn);
-                // Checking if this tile exists
-                if(tile != null){
-                    // Checking if this tile contains a piece that is not an ally
-                    if(tile.hasPiece()){
-                        // Checking if this piece is an enemy piece
-                        if(tile.getPiece().isWhite() != chessPiece.isWhite()){
-                            if(!(chessPiece instanceof Pawn)){
-                                // Simulate move and check if it is a legal state
-                                if(isLegalMove(row, column, newRow, newColumn)){
-                                    legalMoves.add(newRow + "," + newColumn);
-                                }
-                            }
-                            // Stop iteration and do not add legal move if piece is a pawn
-                            else {
-                                break;
-                            }
-                        }
-                    } else {
-                        // Simulate move and check if it is a legal state
-                        if(isLegalMove(row, column, newRow, newColumn)){
-                            legalMoves.add(newRow + "," + newColumn);
-                        }
+                if (!tile.hasPiece()) {
+                    // Simulate move and check if it is a legal state
+                    if (isLegalMove(row, column, newRow, newColumn)) {
+                        legalMoves.add(newRow + "," + newColumn);
                     }
+                } else {
+                    boolean isFriendlyPiece = tile.getPiece().isWhite() == chessPiece.isWhite();
+                    //Continue if there is a friendly piece
+                    if (isFriendlyPiece) continue;
+                    //Return if the piece is pawn
+                    if ((chessPiece instanceof Pawn)) return legalMoves;
+                    // Simulate move and check if it is a legal state
+                    if (isLegalMove(row, column, newRow, newColumn)) {
+                        legalMoves.add(newRow + "," + newColumn);
+                    }
+
                 }
             }
         }
+        return legalMoves;
+    }
 
+    private ArrayList<String> findAllContinuousLegalMoves(int row, int column, ChessPiece chessPiece, Move move, Tile tile) {
+        ArrayList<String> legalMoves = new ArrayList<>();
+        int newRow = row + move.getRowOffset();
+        int newColumn = column + move.getColumnOffset();
+        while(tile != null){
+            // Checking if this tile contains a piece
+            // Checking if this piece is an allied piece
+            if(tile.hasPiece()) {
+                if (tile.getPiece().isWhite() == chessPiece.isWhite())
+                    break;
+                // Simulate move and check if it is a legal state
+                if (isLegalMove(row, column, newRow, newColumn)) {
+                    legalMoves.add(newRow + "," + newColumn);
+                }
+                break;
+            }
+            else {
+                // Simulate move and check if it is a legal state
+                if(isLegalMove(row, column, newRow, newColumn)){
+                    legalMoves.add(newRow + "," + newColumn);
+                }
+                // Updating variables for next iteration
+                newRow += move.getRowOffset();
+                newColumn += move.getColumnOffset();
+                tile = getTile(newRow, newColumn);
+            }
+        }
+        return legalMoves;
+    }
 
-        // Special case for capturing moves
-        moves = chessPiece.getCaptureMoves();
+    private ArrayList<String> findAllCaptureMoves(int row, int column, ChessPiece chessPiece) {
+        ArrayList<String> legalMoves = new ArrayList<String>();
+        ArrayList<Move> moves = chessPiece.getCaptureMoves();
         for (Move move : moves) {
             int newRow = row + move.getRowOffset();
             int newColumn = column + move.getColumnOffset();
