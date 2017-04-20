@@ -9,6 +9,7 @@ public class King extends ChessPiece {
 
     private ArrayList<Move> legalMoves = new ArrayList<>();
     private ArrayList<Move> captureMoves = new ArrayList<>();
+    private boolean isMoved = false;
 
     /**
      * @param sprite visual representation of the piece
@@ -35,5 +36,10 @@ public class King extends ChessPiece {
     @Override
     public ArrayList<Move> getCaptureMoves() {
         return captureMoves;
+    }
+
+    @Override
+    public void moved() {
+        isMoved = true;
     }
 }

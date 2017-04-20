@@ -13,4 +13,5 @@ public interface Piece {
     ArrayList<Move> getCaptureMoves();
     boolean isAlive();
     void setSprite(Sprite sprite);
+    void moved();
 }

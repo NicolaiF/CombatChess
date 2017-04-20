@@ -276,8 +276,8 @@ public class Board {
      */
     public void setPiece(int row, int column, ChessPiece chessPiece, boolean simulation) {
         if(!simulation){
+            chessPiece.moved();
             if(chessPiece instanceof Pawn){
-                ((Pawn) chessPiece).moved();
                 if(chessPiece.isWhite() && row == 0)
                     chessPiece = (ChessPiece) pieceFactory.createQueen(true);
                 if(!chessPiece.isWhite() && row == 7)

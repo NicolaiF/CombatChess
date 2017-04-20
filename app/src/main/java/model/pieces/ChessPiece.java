@@ -59,4 +59,9 @@ public abstract class ChessPiece implements Piece {
     public String toString(){
         return type;
     }
+
+    @Override
+    public void moved() {
+
+    }
 }

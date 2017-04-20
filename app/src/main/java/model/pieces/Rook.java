@@ -9,6 +9,7 @@ public class Rook extends ChessPiece {
 
     private ArrayList<Move> legalMoves = new ArrayList<>();
     private ArrayList<Move> captureMoves = new ArrayList<>();
+    private boolean isMoved = false;
 
     /**
      * @param sprite visual representation of the piece
@@ -31,5 +32,10 @@ public class Rook extends ChessPiece {
     @Override
     public ArrayList<Move> getCaptureMoves() {
         return captureMoves;
+    }
+
+    @Override
+    public void moved() {
+        isMoved = true;
     }
 }
