@@ -28,6 +28,10 @@ public class King extends ChessPiece {
         legalMoves.add(new Move(1,1, false));
     }
 
+    public boolean getIsMoved(){
+        return isMoved;
+    }
+
     @Override
     public ArrayList<Move> getLegalMoves() {
         return legalMoves;

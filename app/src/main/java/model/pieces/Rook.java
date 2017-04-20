@@ -24,6 +24,9 @@ public class Rook extends ChessPiece {
         legalMoves.add(new Move(0,1,true));
     }
 
+    public boolean getIsMoved(){
+        return isMoved;
+    }
     @Override
     public ArrayList<Move> getLegalMoves() {
         return legalMoves;
