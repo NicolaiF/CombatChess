@@ -46,6 +46,6 @@ public abstract class PieceFactory implements AbstractPieceFactory {
 
     @Override
     public Image getSampleImage(){
-        return new Image(R.drawable.fill_board);
+        return new Image(R.drawable.classic_fill_white_pawn);
     }
 }

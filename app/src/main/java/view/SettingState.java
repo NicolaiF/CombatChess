@@ -88,7 +88,7 @@ public class SettingState extends State {
         }
         for (int i = 0; i < boardFactories.size(); i++) {
             // Checking if this index matches current factory
-            if(pieceFactories.get(i).getClass() == controller.getBoardFactory().getClass()){
+            if(boardFactories.get(i).getClass() == controller.getBoardFactory().getClass()){
                 boardIndex = i;
             }
         }
@@ -125,11 +125,17 @@ public class SettingState extends State {
                 }
             }
         };
-        ImageButton buttonPrevPieceStyle = new ImageButton(imagePrev, (int) (0.1*(screenWidth- imagePrev.getWidth()*buttonScale)), (int) (screenHeight*0.10), buttonScale){
+        ImageButton buttonPrevPieceStyle = new ImageButton(imagePrev, (int) (0.1*(screenWidth- imagePrev.getWidth()*buttonScale)), (int) (screenHeight*0.3), buttonScale){
             @Override
             public boolean onTouchDown(MotionEvent motionEvent){
                 if(getBoundingBox().contains(motionEvent.getX(), motionEvent.getY())){
+                    //Updating index
                     pieceIndex = (pieceIndex-1) % pieceFactories.size();
+                    if(pieceIndex < 0){
+                        pieceIndex += pieceFactories.size();
+                    }
+
+                    // Setting new  factory for the pieces
                     AbstractPieceFactory pieceFactory = pieceFactories.get(pieceIndex);
                     controller.setPieceFactory(pieceFactory);
 
@@ -153,7 +159,13 @@ public class SettingState extends State {
             @Override
             public boolean onTouchDown(MotionEvent motionEvent){
                 if(getBoundingBox().contains(motionEvent.getX(), motionEvent.getY())){
-                    boardIndex = (boardIndex-1) % pieceFactories.size();
+                    // Updating index
+                    boardIndex = (boardIndex-1) % boardFactories.size();
+                    if(boardIndex < 0){
+                        boardIndex += boardFactories.size();
+                    }
+
+                    // Settings new factory for board
                     AbstractBoardFactory boardFactory = boardFactories.get(boardIndex);
                     controller.setBoardFactory(boardFactory);
 
@@ -168,11 +180,14 @@ public class SettingState extends State {
                 return false;
             }
         };
-        ImageButton buttonNextPieceStyle = new ImageButton(imageNext, (int) (0.9*(screenWidth- imageNext.getWidth()*buttonScale)), (int) (screenHeight*0.10), buttonScale){
+        ImageButton buttonNextPieceStyle = new ImageButton(imageNext, (int) (0.9*(screenWidth- imageNext.getWidth()*buttonScale)), (int) (screenHeight*0.3), buttonScale){
             @Override
             public boolean onTouchDown(MotionEvent motionEvent){
                 if(getBoundingBox().contains(motionEvent.getX(), motionEvent.getY())){
+                    //Updating index
                     pieceIndex = (pieceIndex+1) % pieceFactories.size();
+
+                    // Settings new factory for the pieces
                     AbstractPieceFactory pieceFactory = pieceFactories.get(pieceIndex);
                     controller.setPieceFactory(pieceFactory);
 
@@ -197,7 +212,10 @@ public class SettingState extends State {
             public boolean onTouchDown(MotionEvent motionEvent){
                 if(getBoundingBox().contains(motionEvent.getX(), motionEvent.getY())){
                     if(getBoundingBox().contains(motionEvent.getX(), motionEvent.getY())){
-                        boardIndex = (boardIndex+1) % pieceFactories.size();
+                        // Updating index
+                        boardIndex = (boardIndex+1) % boardFactories.size();
+
+                        // Settings new factory for board
                         AbstractBoardFactory boardFactory = boardFactories.get(boardIndex);
                         controller.setBoardFactory(boardFactory);
 
@@ -235,7 +253,7 @@ public class SettingState extends State {
 
         // Calculating the scales
         float bgScale = screenWidth/imgBackground.getWidth();
-        float pieceScale = screenWidth/imgBoard.getWidth();
+        float pieceScale = screenWidth/(imgPiece.getWidth()*8f);
         float boardScale = screenWidth/(imgBoard.getWidth()*2f);
 
         // Adjusting pieces
@@ -245,12 +263,12 @@ public class SettingState extends State {
         float yPosBoard = screenHeight*0.5f - (imgBoard.getHeight()*boardScale - new Image(R.drawable.right_arrow).getHeight()*buttonScale)/2f;
         adjustSprite(board, new Vector2(boardScale, boardScale), new Vector2(0,0), new Vector2(xPosBoard, yPosBoard));
 
-        float xPosWPawn = screenWidth*0.4f;
-        float yPosWPawn = screenHeight*0.1f;
+        float xPosWPawn = screenWidth*0.4f - imgPiece.getWidth()*pieceScale*0.5f;
+        float yPosWPawn = screenHeight*0.3f;
         adjustSprite(whiteKing, new Vector2(pieceScale, pieceScale), new Vector2(0,0), new Vector2(xPosWPawn, yPosWPawn));
 
-        float xPosBPawn = screenWidth*0.6f;
-        float yPosBPawn = screenHeight*0.1f;
+        float xPosBPawn = screenWidth*0.6f - imgPiece.getWidth()*pieceScale*0.5f;
+        float yPosBPawn = screenHeight*0.3f;
         adjustSprite(blackKing, new Vector2(pieceScale, pieceScale), new Vector2(0,0), new Vector2(xPosBPawn, yPosBPawn));
     }
 
