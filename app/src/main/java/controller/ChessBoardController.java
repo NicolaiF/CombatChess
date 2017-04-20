@@ -1,11 +1,14 @@
 package controller;
 
+import android.graphics.Canvas;
+
 import interfaces.AbstractBoardFactory;
 import interfaces.AbstractPieceFactory;
 import model.Board;
 import model.Tile;
 import model.pieces.ChessPiece;
 import sheep.game.Sprite;
+import sheep.math.Vector2;
 
 import java.util.ArrayList;
 
@@ -131,5 +134,17 @@ public class ChessBoardController {
 
     public void setBoardSprite(Sprite boardSprite) {
         board.setBoardSprite(boardSprite);
+    }
+
+    /** Adjust the sprite
+     * @param sprite the sprite to be adjusted
+     * @param scale the scale for this sprite
+     * @param offset the offset for this sprite
+     * @param position the position for this sprite
+     */
+    public void adjustSprite(Sprite sprite, Vector2 scale, Vector2 offset, Vector2 position){
+        sprite.setScale(scale);
+        sprite.setOffset(offset);
+        sprite.setPosition(position);
     }
 }

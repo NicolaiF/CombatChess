@@ -76,22 +76,10 @@ public class GameState extends State {
         pieceWidth = new Image(R.drawable.classic_fill_black_pawn).getWidth() * pieceScale;
 
         // Adjusting the sprites
-        adjustSprite(chessBoard, new Vector2(pieceScale, pieceScale), new Vector2(0, 0), new Vector2(0, (float) (screenHeight-screenWidth)/2));
-        adjustSprite(table, new Vector2(tableScale, tableScale), new Vector2(0, 0), new Vector2(0 , chessBoard.getY() - (tableImage.getHeight()*tableScale - boardImage.getHeight()* pieceScale)/2));
+        controller.adjustSprite(chessBoard, new Vector2(pieceScale, pieceScale), new Vector2(0, 0), new Vector2(0, (float) (screenHeight-screenWidth)/2));
+        controller.adjustSprite(table, new Vector2(tableScale, tableScale), new Vector2(0, 0), new Vector2(0 , chessBoard.getY() - (tableImage.getHeight()*tableScale - boardImage.getHeight()* pieceScale)/2));
 
         controller.setBoardSprite(chessBoard);
-    }
-
-    /** Adjust the sprite
-     * @param sprite the sprite to be adjusted
-     * @param scale the scale for this sprite
-     * @param offset the offset for this sprite
-     * @param position the position for this sprite
-     */
-    private void adjustSprite(Sprite sprite, Vector2 scale, Vector2 offset, Vector2 position){
-        sprite.setScale(scale);
-        sprite.setOffset(offset);
-        sprite.setPosition(position);
     }
 
     private void createButtons() {
@@ -187,11 +175,13 @@ public class GameState extends State {
     }
 
     private boolean onChessPieceSelected(int column, int row) {
+        // Updating position of selected piece
         int[] index = new int[2];
         index[0] = row;
         index[1] = column;
         posSelectedPiece = index;
         piece = controller.getPiece(row, column);
+
         //Remove legal moves on old legal moves
         if(legalMoves != null)
             controller.setHighlightedOnTiles(legalMoves, false);
@@ -219,18 +209,14 @@ public class GameState extends State {
 
                 if(controller.isTileHighlighted(row, column)){
                     Sprite sprite = controller.getTile(row, column).getHighlightSprite();
-                    sprite.setPosition(column * pieceWidth, (screenHeight-screenWidth)/2 + row * pieceWidth );
-                    sprite.setScale(pieceScale, pieceScale);
-                    sprite.setOffset(0, 0);
+                    controller.adjustSprite(sprite, new Vector2(pieceScale, pieceScale), new Vector2(0,0), new Vector2(column * pieceWidth, (screenHeight-screenWidth)/2 + row * pieceWidth));
                     sprite.update(0);
                     sprite.draw(canvas);
                 }
 
                 if(controller.hasPiece(row, column)){
                     Sprite sprite = controller.getPiece(row, column).getSprite();
-                    sprite.setPosition(column * pieceWidth, (screenHeight-screenWidth)/2 + row * pieceWidth );
-                    sprite.setScale(pieceScale, pieceScale);
-                    sprite.setOffset(0,0);
+                    controller.adjustSprite(sprite, new Vector2(pieceScale, pieceScale), new Vector2(0,0), new Vector2(column * pieceWidth, (screenHeight-screenWidth)/2 + row * pieceWidth ));
                     sprite.update(0);
                     sprite.draw(canvas);
                 }
