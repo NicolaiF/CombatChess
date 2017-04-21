@@ -525,7 +525,7 @@ public class Board {
      * @param column     horizontal index in the board
      * @param chessPiece The chess piece to be added
      */
-    private void setPiece(int row, int column, ChessPiece chessPiece) {
+    public void setPiece(int row, int column, ChessPiece chessPiece) {
         getTile(row, column).setPiece(chessPiece);
         updateKingPos(row, column, chessPiece);
     }

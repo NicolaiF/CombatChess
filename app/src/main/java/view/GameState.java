@@ -386,11 +386,15 @@ public class GameState extends State {
         String minWhite = Float.toString(whiteTime/60).split("\\.")[0];
         String secWhite = String.valueOf(Math.round(whiteTime) - 60*Integer.parseInt(minWhite));
         if(secWhite.equals("60")){ secWhite = "59";}
+        if(secWhite.length() < 2)
+            secWhite = "0" + secWhite;
         txtWhiteTime.setLabel(minWhite + ":" + secWhite);
 
         String minBlack = Float.toString(blackTime/60).split("\\.")[0];
         String secBlack = String.valueOf(Math.round(blackTime) - 60*Integer.parseInt(minBlack));
         if(secBlack.equals("60")){ secBlack = "59";}
+        if(secBlack.length() < 2)
+            secBlack = "0" + secBlack;
         txtBlackTime.setLabel(minBlack + ":" + secBlack);
     }
 
