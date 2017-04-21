@@ -76,6 +76,9 @@ public class MenuState extends State {
         display.getSize(size);
         screenWidth = size.x;
         screenHeight = size.y;
+
+        Constants.SCREEN_WIDTH = size.x;
+        Constants.SCREEN_HEIGHT = size.y;
     }
 
     private void createButtons() {

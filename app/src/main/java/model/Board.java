@@ -142,8 +142,6 @@ public class Board {
      * @return A list of legal moves for this piece
      */
     public ArrayList<String> getLegalMoves(int row, int column) {
-        Log.d("Debug", "White King pos: " + posWhiteKing[0] + "," + posWhiteKing[1]);
-        Log.d("Debug", "Black King pos: " + posBlackKing[0] + "," + posBlackKing[1]);
         ArrayList<String> legalMoves = new ArrayList<>();
         ChessPiece chessPiece = getTile(row, column).getPiece();
         legalMoves.addAll(findAllLegalMoves(row, column, chessPiece));
@@ -750,5 +748,18 @@ public class Board {
 
     public void setBoardSprite(Sprite boardSprite) {
         this.boardSprite = boardSprite;
+    }
+
+    public PowerUp getPowerUp(int row, int column) {
+        return getTile(row, column).getPowerUp();
+    }
+
+    /** Removes the power up in this tile and returns the power up that was removed
+     * @param row vertical index
+     * @param column horizontal index
+     * @return the piece that was removed
+     */
+    public PowerUp removePowerUp(int row, int column) {
+        return getTile(row, column).removePowerUp();
     }
 }

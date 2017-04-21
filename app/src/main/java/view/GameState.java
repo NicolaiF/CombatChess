@@ -112,7 +112,12 @@ public class GameState extends State {
         pieceWidth = new Image(R.drawable.classic_fill_black_pawn).getWidth() * pieceScale;
         boardHeight = boardImage.getHeight()*pieceScale;
         tableHeight = tableImage.getHeight()*tableScale;
-        Log.d("Debug", "Table Height = " + tableHeight);
+
+        // Updating constants
+        Constants.SCALE_PIECES = pieceScale;
+        Constants.PIECE_HEIGHT = pieceWidth;
+        Constants.PIECE_WIDTH = pieceWidth;
+
 
         // Adjusting the sprites
         controller.adjustSprite(chessBoard, new Vector2(pieceScale, pieceScale), new Vector2(0, 0), new Vector2(0, (float) (screenHeight-screenWidth)/2));
@@ -185,8 +190,6 @@ public class GameState extends State {
                 }
             }
         }
-        Log.d("Debug", "Black captures: " + blackCaptures.toString());
-        Log.d("Debug", "White captures: " + whiteCaptures.toString());
     }
 
     private boolean onChessPieceSelected(int column, int row) {
@@ -215,7 +218,7 @@ public class GameState extends State {
         }
     }
 
-    private void drawPieces(Canvas canvas) {
+    private void drawSprites(Canvas canvas) {
         for (int row = 0; row < 8; row++) {
 
             for (int column = 0; column < 8; column++) {
@@ -229,6 +232,12 @@ public class GameState extends State {
 
                 if(controller.hasPiece(row, column)){
                     Sprite sprite = controller.getPiece(row, column).getSprite();
+                    controller.adjustSprite(sprite, new Vector2(pieceScale, pieceScale), new Vector2(0,0), new Vector2(column * pieceWidth, (screenHeight-screenWidth)/2 + row * pieceWidth ));
+                    sprite.update(0);
+                    sprite.draw(canvas);
+                }
+                if(controller.hasPowerUp(row, column)){
+                    Sprite sprite = controller.getPowerUp(row, column).getSprite();
                     controller.adjustSprite(sprite, new Vector2(pieceScale, pieceScale), new Vector2(0,0), new Vector2(column * pieceWidth, (screenHeight-screenWidth)/2 + row * pieceWidth ));
                     sprite.update(0);
                     sprite.draw(canvas);
@@ -249,10 +258,6 @@ public class GameState extends State {
 
         int column = (int) (motionEvent.getX()/pieceWidth);
         int row = (int) ((motionEvent.getY()-(screenHeight-screenWidth)/2)/pieceWidth);
-
-        Log.d("Clicked : ", "column: " + column);
-        Log.d("Clicked : ", "row: " + row);
-        Log.d("Clicked : ", "SelectedPiecePos: " + posSelectedPiece);
 
         // A piece is not selected and a new piece is clicked. Set is as selected piece
         if(posSelectedPiece == null && controller.hasPiece(row, column)){
@@ -330,7 +335,7 @@ public class GameState extends State {
         table.update(0);
         table.draw(canvas);
         controller.getBoardSprite().draw(canvas);
-        drawPieces(canvas);
+        drawSprites(canvas);
         drawCapturedPieces(canvas);
 
         // Drawing buttons

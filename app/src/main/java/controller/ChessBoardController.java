@@ -1,13 +1,20 @@
 package controller;
 
+import android.graphics.Matrix;
+import android.util.Log;
+
 import interfaces.AbstractBoardFactory;
 import interfaces.AbstractPieceFactory;
+import interfaces.Piece;
+import interfaces.PowerUp;
 import model.Board;
 import model.Tile;
 import model.pieces.ChessPiece;
 import model.pieces.Pawn;
+import model.powerups.Upgrade;
 import sheep.game.Sprite;
 import sheep.math.Vector2;
+import view.Constants;
 
 import java.util.ArrayList;
 
@@ -15,6 +22,8 @@ public class ChessBoardController {
 
     private Board board;
     private ChessPiece lastCapturedPiece;
+    private boolean isCombatChess = true; //TODO: Make user choose
+    private int movesSinceLastPowerUp;
 
     public ChessBoardController(Board board){
         this.board = board;
@@ -72,10 +81,42 @@ public class ChessBoardController {
             else
                 updateLastCapturedPiece(newRow, newColumn);
 
+            // Move was legal, adding power ups if necessary
+            addPowerUp();
             board.setPiece(newRow, newColumn, chessPiece, false);
+
+            // Check if a power up is collected
+            if (board.hasPowerUp(newRow, newRow)){
+                PowerUp powerUp = board.removePowerUp(newRow, newColumn);
+                powerUp.activatePowerUp(this, getPiece(newRow, newColumn), newRow, newColumn);
+            }
             return true;
         }
         return false;
+    }
+
+    /**
+     * Adding power ups with statistical chance
+     * The chance shall increase if there is a long time since last power up was added
+     */
+    private void addPowerUp() {
+        if(isCombatChess){
+            if(Math.random()*movesSinceLastPowerUp > 1){
+                // Generate random position for power up
+                int row = (int) Math.floor(Math.random()*2) + 3;
+                int column = (int) Math.floor(Math.random()*8);
+
+                Log.d("Debug", row + "," + column);
+
+                // Creating power up
+                Upgrade upgrade = new Upgrade();
+
+                board.setPowerUp(row, column, upgrade);
+                movesSinceLastPowerUp = 0;
+            } else {
+                movesSinceLastPowerUp++;
+            }
+        }
     }
 
     /** Updates the last captured piece if the last moved captured a piece
@@ -184,4 +225,27 @@ public class ChessBoardController {
         sprite.setOffset(offset);
         sprite.setPosition(position);
     }
+
+    public void setCombatChess(boolean isCombatChess){
+        this.isCombatChess = isCombatChess;
+    }
+
+    public boolean hasPowerUp(int row, int column) {
+        return board.hasPowerUp(row, column);
+    }
+
+    public PowerUp getPowerUp(int row, int column) {
+        return board.getPowerUp(row, column);
+    }
+
+    /** Sets a piece at this location
+     * @param row vertical index
+     * @param column horizontal index
+     * @param chessPiece the chess piece to be added
+     */
+    public void setPiece(int row, int column, ChessPiece chessPiece) {
+        board.setPiece(row, column, chessPiece, false);
+    }
+
+
 }
