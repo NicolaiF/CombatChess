@@ -81,15 +81,15 @@ public class ChessBoardController {
             else
                 updateLastCapturedPiece(newRow, newColumn);
 
-            // Move was legal, adding power ups if necessary
-            addPowerUp();
             board.setPiece(newRow, newColumn, chessPiece, false);
-
             // Check if a power up is collected
-            if (board.hasPowerUp(newRow, newRow)){
+            if (board.hasPowerUp(newRow, newColumn)){
                 PowerUp powerUp = board.removePowerUp(newRow, newColumn);
                 powerUp.activatePowerUp(this, getPiece(newRow, newColumn), newRow, newColumn);
             }
+
+            // Move was legal, adding power ups if necessary
+            addPowerUp();
             return true;
         }
         return false;
@@ -101,20 +101,20 @@ public class ChessBoardController {
      */
     private void addPowerUp() {
         if(isCombatChess){
-            if(Math.random()*movesSinceLastPowerUp > 1){
+            if(Math.random()*movesSinceLastPowerUp > 5){
                 // Generate random position for power up
                 int row = (int) Math.floor(Math.random()*2) + 3;
                 int column = (int) Math.floor(Math.random()*8);
 
-                Log.d("Debug", row + "," + column);
+                if(!hasPiece(row, column)){
+                    // Creating power up
+                    Upgrade upgrade = new Upgrade();
 
-                // Creating power up
-                Upgrade upgrade = new Upgrade();
-
-                board.setPowerUp(row, column, upgrade);
-                movesSinceLastPowerUp = 0;
-            } else {
-                movesSinceLastPowerUp++;
+                    board.setPowerUp(row, column, upgrade);
+                    movesSinceLastPowerUp = 0;
+                } else {
+                    movesSinceLastPowerUp++;
+                }
             }
         }
     }

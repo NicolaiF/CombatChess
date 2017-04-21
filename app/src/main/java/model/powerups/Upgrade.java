@@ -8,6 +8,7 @@ import interfaces.PowerUp;
 import main.R;
 import model.factories.pieces.PieceFactory;
 import model.pieces.ChessPiece;
+import model.pieces.King;
 import sheep.game.Sprite;
 import sheep.graphics.Image;
 
@@ -59,7 +60,9 @@ public class Upgrade implements PowerUp {
     @Override
     public void activatePowerUp(ChessBoardController controller, ChessPiece chessPiece, int row, int column) {
         AbstractPieceFactory factory = controller.getPieceFactory();
-        controller.setPiece(row ,column, (ChessPiece) factory.createQueen(chessPiece.isWhite()));
+        if(!(chessPiece instanceof King)){
+            controller.setPiece(row ,column, (ChessPiece) factory.createQueen(chessPiece.isWhite()));
+        }
     }
 
     public Sprite getSprite(){
