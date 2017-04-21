@@ -23,10 +23,13 @@ public class ChessBoardController {
 
     private Board board;
     private ChessPiece lastCapturedPiece;
+    private boolean isTimerActivated;
+    private float time;
     public ChessBoardController(Board board){
         this.board = board;
         setCombatChess(true);// todo user choice
     }
+
 
 
     /** Sets if a tile is highlighted
@@ -216,4 +219,19 @@ public class ChessBoardController {
     }
 
 
+    public boolean isTimerActivated() {
+        return isTimerActivated;
+    }
+
+    public void setTimerActivated(boolean timerActivated) {
+        isTimerActivated = timerActivated;
+    }
+
+    public float getTime() {
+        return time;
+    }
+
+    public void setTime(float time) {
+        this.time = time;
+    }
 }

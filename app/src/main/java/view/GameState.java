@@ -80,7 +80,7 @@ public class GameState extends State {
         createButtons();
     }
 
-    private void createTimers() {
+    private void    createTimers() {
         timer = new Timer();
 
         Paint paint = new Paint();
