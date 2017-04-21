@@ -12,6 +12,7 @@ import model.pieces.Knight;
 import model.pieces.Pawn;
 import model.pieces.Queen;
 import model.pieces.Rook;
+import model.powerups.Upgrade;
 import sheep.game.Sprite;
 
 import java.util.ArrayList;
@@ -28,6 +29,8 @@ public class Board {
     private int[] posWhiteKing;
     private int[] posBlackKing;
     private Sprite boardSprite;
+    private boolean isPowerUpsActive;
+    private int movesSinceLastPowerUp;
 
     public Board(){
 
@@ -475,6 +478,17 @@ public class Board {
         }
         getTile(row, column).setPiece(chessPiece);
 
+        if(!simulation) {
+            // Check if a power up is collected
+            if (hasPowerUp(row, column)) {
+                PowerUp powerUp = removePowerUp(row, column);
+                powerUp.activatePowerUp(this, chessPiece, row, column);
+            }
+
+            // Move was legal, adding power ups if necessary
+            addPowerUp();
+        }
+
         // Updating position of the king
         if(chessPiece instanceof King){
             if(chessPiece.isWhite()){
@@ -485,6 +499,30 @@ public class Board {
             } else {
                 posBlackKing[0] = row;
                 posBlackKing[1] = column;
+            }
+        }
+    }
+
+    /**
+     * Adding power ups with statistical chance
+     * The chance shall increase if there is a long time since last power up was added
+     */
+    private void addPowerUp() {
+        if (isPowerUpsActive) {
+            if (Math.random() * movesSinceLastPowerUp > 5) {
+                // Generate random position for power up
+                int row = (int) Math.floor(Math.random() * 2) + 3;
+                int column = (int) Math.floor(Math.random() * 8);
+
+                if (!hasPiece(row, column)) {
+                    // Creating power up
+                    Upgrade upgrade = new Upgrade();
+
+                    setPowerUp(row, column, upgrade);
+                    movesSinceLastPowerUp = 0;
+                }
+            } else {
+                movesSinceLastPowerUp++;
             }
         }
     }
@@ -761,5 +799,9 @@ public class Board {
      */
     public PowerUp removePowerUp(int row, int column) {
         return getTile(row, column).removePowerUp();
+    }
+
+    public void setPowerUpsActive(boolean powerUpsActive) {
+        isPowerUpsActive = powerUpsActive;
     }
 }

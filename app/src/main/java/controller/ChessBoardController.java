@@ -17,17 +17,17 @@ import sheep.math.Vector2;
 import view.Constants;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 public class ChessBoardController {
 
     private Board board;
     private ChessPiece lastCapturedPiece;
-    private boolean isCombatChess = true; //TODO: Make user choose
-    private int movesSinceLastPowerUp;
-
     public ChessBoardController(Board board){
         this.board = board;
+        setCombatChess(true);// todo user choice
     }
+
 
     /** Sets if a tile is highlighted
      * @param tilePos positions of the tiles to be changed
@@ -82,41 +82,9 @@ public class ChessBoardController {
                 updateLastCapturedPiece(newRow, newColumn);
 
             board.setPiece(newRow, newColumn, chessPiece, false);
-            // Check if a power up is collected
-            if (board.hasPowerUp(newRow, newColumn)){
-                PowerUp powerUp = board.removePowerUp(newRow, newColumn);
-                powerUp.activatePowerUp(this, getPiece(newRow, newColumn), newRow, newColumn);
-            }
-
-            // Move was legal, adding power ups if necessary
-            addPowerUp();
             return true;
         }
         return false;
-    }
-
-    /**
-     * Adding power ups with statistical chance
-     * The chance shall increase if there is a long time since last power up was added
-     */
-    private void addPowerUp() {
-        if(isCombatChess){
-            if(Math.random()*movesSinceLastPowerUp > 5){
-                // Generate random position for power up
-                int row = (int) Math.floor(Math.random()*2) + 3;
-                int column = (int) Math.floor(Math.random()*8);
-
-                if(!hasPiece(row, column)){
-                    // Creating power up
-                    Upgrade upgrade = new Upgrade();
-
-                    board.setPowerUp(row, column, upgrade);
-                    movesSinceLastPowerUp = 0;
-                } else {
-                    movesSinceLastPowerUp++;
-                }
-            }
-        }
     }
 
     /** Updates the last captured piece if the last moved captured a piece
@@ -227,7 +195,7 @@ public class ChessBoardController {
     }
 
     public void setCombatChess(boolean isCombatChess){
-        this.isCombatChess = isCombatChess;
+        board.setPowerUpsActive(isCombatChess);
     }
 
     public boolean hasPowerUp(int row, int column) {

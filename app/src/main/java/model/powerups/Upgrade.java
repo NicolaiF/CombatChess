@@ -6,6 +6,7 @@ import controller.ChessBoardController;
 import interfaces.AbstractPieceFactory;
 import interfaces.PowerUp;
 import main.R;
+import model.Board;
 import model.factories.pieces.PieceFactory;
 import model.pieces.ChessPiece;
 import model.pieces.King;
@@ -52,16 +53,16 @@ public class Upgrade implements PowerUp {
     }
 
     /** Activates the power up. This power up upgrades the piece to a queen
-     * @param controller Reference to the controller to the board
+     * @param board the board invoking the method
      * @param chessPiece The piece that took the power up
      * @param row vertical index for this power up
      * @param column horizontal index for this power up
      */
     @Override
-    public void activatePowerUp(ChessBoardController controller, ChessPiece chessPiece, int row, int column) {
-        AbstractPieceFactory factory = controller.getPieceFactory();
+    public void activatePowerUp(Board board, ChessPiece chessPiece, int row, int column) {
+        AbstractPieceFactory factory = board.getPieceFactory();
         if(!(chessPiece instanceof King)){
-            controller.setPiece(row ,column, (ChessPiece) factory.createQueen(chessPiece.isWhite()));
+            board.setPiece(row ,column, (ChessPiece) factory.createQueen(chessPiece.isWhite()), false);
         }
     }
 
