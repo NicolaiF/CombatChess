@@ -52,8 +52,8 @@ public class SettingState extends State {
         buttonContainer = new Container();
         this.controller = controller;
 
-        // Getting size of screen
-        collectScreenData();
+        screenHeight = Constants.SCREEN_HEIGHT;
+        screenWidth = Constants.SCREEN_WIDTH;
 
         // Creating factories
         createFactories();

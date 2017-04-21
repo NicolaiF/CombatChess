@@ -25,6 +25,9 @@ public class ChessBoardController {
     private ChessPiece lastCapturedPiece;
     private boolean isTimerActivated;
     private float time;
+    private float startTime;
+    private float timeStep;
+
     public ChessBoardController(Board board){
         this.board = board;
         setCombatChess(true);// todo user choice
@@ -195,6 +198,7 @@ public class ChessBoardController {
         sprite.setScale(scale);
         sprite.setOffset(offset);
         sprite.setPosition(position);
+        sprite.update(0);
     }
 
     public void setCombatChess(boolean isCombatChess){
@@ -225,13 +229,5 @@ public class ChessBoardController {
 
     public void setTimerActivated(boolean timerActivated) {
         isTimerActivated = timerActivated;
-    }
-
-    public float getTime() {
-        return time;
-    }
-
-    public void setTime(float time) {
-        this.time = time;
     }
 }

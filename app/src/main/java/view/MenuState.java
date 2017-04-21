@@ -91,10 +91,10 @@ public class MenuState extends State {
         buttonNewGame = new ImageButton(imageNewGame, 0, topMargin*15/10, screenWidth/(imageNewGame.getWidth()*15/10)){
             @Override
             public boolean onTouchDown(MotionEvent motionEvent){
-                Log.d("Debug", "New button clicked: " + getBoundingBox().contains(motionEvent.getX(), motionEvent.getY()));
                 if(getBoundingBox().contains(motionEvent.getX(), motionEvent.getY())){
-                    savedGameState = new GameState(getGame(), new ChessBoardController(new Board()));
-                    getGame().pushState(savedGameState);
+                    ChessBoardController controller = new ChessBoardController(new Board());
+                    savedGameState = new GameState(getGame(),controller);
+                    getGame().pushState(new SetupState(controller, savedGameState));
                     return true;
                 } else {
                     return false;
@@ -110,7 +110,6 @@ public class MenuState extends State {
 
             @Override
             public boolean onTouchDown(MotionEvent motionEvent) {
-                Log.d("Debug", "Continue button clicked: " + getBoundingBox().contains(motionEvent.getX(), motionEvent.getY()));
                 if (getBoundingBox().contains(motionEvent.getX(), motionEvent.getY()) && savedGameState != null) {
                     savedGameState.updateTimer();
                     getGame().pushState(savedGameState);

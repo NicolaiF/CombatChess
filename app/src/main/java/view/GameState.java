@@ -51,9 +51,9 @@ public class GameState extends State {
     private float pieceScale;
 
     private Timer timer;
-    private float startTime = 60*10; // TODO: Maybe let the user choose time
-    private float whiteTime = startTime;
-    private float blackTime = startTime;
+    private float timeStep;
+    private float whiteTime;
+    private float blackTime;
     private TextButton txtWhiteTime;
     private TextButton txtBlackTime;
 
@@ -63,12 +63,12 @@ public class GameState extends State {
 
     public GameState(Game game, ChessBoardController controller){
 
+        screenHeight = Constants.SCREEN_HEIGHT;
+        screenWidth = Constants.SCREEN_WIDTH;
+
         setGame(game);
         setController(controller);
         whiteTurn = true;
-
-        // Getting size of screen
-        collectScreenData();
 
         // Creating sprites
         createSprites();
@@ -80,8 +80,12 @@ public class GameState extends State {
         createButtons();
     }
 
-    private void    createTimers() {
+    private void createTimers() {
         timer = new Timer();
+
+        timeStep = Constants.TIME_STEP;
+        whiteTime = Constants.START_TIME;
+        blackTime = Constants.START_TIME;
 
         Paint paint = new Paint();
         paint.setTextSize(pieceWidth/2);
@@ -282,6 +286,10 @@ public class GameState extends State {
                 }
 
                 // Move was successful other players turn
+                if(controller.isTimerActivated()){
+                    // Adding time to the timer
+                    addTime(Constants.TIME_STEP);
+                }
                 whiteTurn = !whiteTurn;
             }
             // Remove highlighting on tiles
@@ -342,9 +350,19 @@ public class GameState extends State {
         buttonContainer.draw(canvas);
 
         // Drawing timers
-        updateTimeLabels();
-        txtWhiteTime.draw(canvas);
-        txtBlackTime.draw(canvas);
+        if(controller.isTimerActivated()){
+            updateTimeLabels();
+            txtWhiteTime.draw(canvas);
+            txtBlackTime.draw(canvas);
+        }
+    }
+
+    public void addTime(float dt){
+        if(whiteTurn){
+            whiteTime += dt;
+        } else {
+            blackTime += dt;
+        }
     }
 
     private void updateTimeLabels() {
