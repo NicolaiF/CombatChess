@@ -5,6 +5,7 @@ import interfaces.AbstractPieceFactory;
 import model.Board;
 import model.Tile;
 import model.pieces.ChessPiece;
+import model.pieces.Pawn;
 import sheep.game.Sprite;
 import sheep.math.Vector2;
 
@@ -58,8 +59,19 @@ public class ChessBoardController {
 
         if (legalMoves.contains(newPos)) {
             ChessPiece chessPiece = board.getTile(oldRow, oldColumn).removePiece();
+            if(chessPiece instanceof Pawn){
+                if(Math.abs(newRow-oldRow) == 2){
+                    Pawn pawn = (Pawn) chessPiece;
+                    pawn.setPassantable(true);
+                }
+                if(oldColumn != newColumn && !getTile(newRow, newColumn).hasPiece()) {
+                    updateLastCapturedPiece(oldRow, newColumn);
+                }
+                else updateLastCapturedPiece(newRow, newColumn);
+            }
+            else
+                updateLastCapturedPiece(newRow, newColumn);
 
-            updateLastCapturedPiece(newRow, newColumn);
             board.setPiece(newRow, newColumn, chessPiece, false);
             return true;
         }

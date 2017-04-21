@@ -148,9 +148,14 @@ public class Board {
         ChessPiece chessPiece = getTile(row, column).getPiece();
         legalMoves.addAll(findAllLegalMoves(row, column, chessPiece));
         legalMoves.addAll(findAllCaptureMoves(row, column, chessPiece));
+        legalMoves.addAll(findAllSpecialMoves(row,column,chessPiece));
+        return legalMoves;
+    }
 
+    private ArrayList<String> findAllSpecialMoves(int row, int column, ChessPiece chessPiece) {
+        ArrayList<String> legalMoves = new ArrayList<>();
         if (chessPiece instanceof King) {
-            // Checking if allied king is attacked after the move
+            // Checking if allied king is attacked before the move
             boolean isLegal = isAlliedKingAttacked(chessPiece.isWhite());
             if (!isLegal)
                 return legalMoves;
@@ -162,6 +167,30 @@ public class Board {
             {
                 legalMoves.addAll(findRocadeMoveForRook(0, 4, 2, 0, 3, false));
                 legalMoves.addAll(findRocadeMoveForRook(0, 4, 6, 7, 5, false));
+            }
+        }
+        if(chessPiece instanceof Pawn){
+            legalMoves.addAll(FindPassantMove(row, column, 1, chessPiece));
+            legalMoves.addAll(FindPassantMove(row, column, -1, chessPiece));
+        }
+        return legalMoves;
+    }
+
+    private ArrayList<String> FindPassantMove(int row, int column, int columnOffset, ChessPiece chessPiece) {
+        ArrayList<String> legalMoves = new ArrayList<>();
+        Tile tile = getTile(row, column + columnOffset);
+        if(tile != null) {
+            Piece piece = tile.getPiece();
+            if (piece != null) {
+                if (piece.isWhite() != chessPiece.isWhite()) {
+                    if (piece instanceof Pawn) {
+                        Pawn pawn = (Pawn) piece;
+                        if (pawn.isPassantable()) {
+                            int rowOffset = chessPiece.getLegalMoves().get(0).getRowOffset();
+                            legalMoves.add((row + rowOffset) + "," + (column + columnOffset));
+                        }
+                    }
+                }
             }
         }
         return legalMoves;
@@ -202,7 +231,7 @@ public class Board {
     }
 
     private boolean isRookUnmoved(int row, int column, boolean isWhite){
-        Tile tile = getTile(row,column);
+        Tile tile = getTile(row, column);
         ChessPiece piece = tile.getPiece();
         if(piece == null || !(piece instanceof Rook) || piece.isWhite() != isWhite)
             return false;
@@ -366,6 +395,7 @@ public class Board {
                     }
                 }
             }
+            resetAllPassantablePawns(!chessPiece.isWhite());
             chessPiece.moved();
         }
         getTile(row, column).setPiece(chessPiece);
@@ -438,6 +468,23 @@ public class Board {
             }
         }
         return isCheckMate;
+    }
+
+    private void resetAllPassantablePawns(boolean isWhite){
+        for (int row = 0; row < 8; row++) {
+            for (int column = 0; column < 8; column++) {
+                Tile tile = getTile(row, column);
+                if(tile.hasPiece()){
+                    Piece piece = tile.getPiece();
+                    if(piece.isWhite() == isWhite){
+                        if(piece instanceof Pawn){
+                            Pawn pawn = (Pawn) piece;
+                            pawn.setPassantable(false);
+                        }
+                    }
+                }
+            }
+        }
     }
 
     /** Checking if this piece attacks the opponents king

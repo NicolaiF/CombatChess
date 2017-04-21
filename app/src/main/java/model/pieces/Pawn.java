@@ -10,6 +10,7 @@ public class Pawn extends ChessPiece {
     private ArrayList<Move> legalMoves = new ArrayList<>();
     private ArrayList<Move> captureMoves = new ArrayList<>();
     private boolean isMoved = false;
+    private boolean isPassantable = false;
 
     /**
      * @param sprite visual representation of the piece
@@ -47,5 +48,13 @@ public class Pawn extends ChessPiece {
     @Override
     public ArrayList<Move> getCaptureMoves() {
         return captureMoves;
+    }
+
+    public boolean isPassantable() {
+        return isPassantable;
+    }
+
+    public void setPassantable(boolean passantable) {
+        isPassantable = passantable;
     }
 }
