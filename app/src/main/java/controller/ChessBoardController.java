@@ -1,39 +1,24 @@
 package controller;
 
-import android.graphics.Matrix;
-import android.util.Log;
-
 import interfaces.AbstractBoardFactory;
 import interfaces.AbstractPieceFactory;
-import interfaces.Piece;
 import interfaces.PowerUp;
 import model.Board;
 import model.Tile;
 import model.pieces.ChessPiece;
-import model.pieces.Pawn;
-import model.powerups.Upgrade;
 import sheep.game.Sprite;
 import sheep.math.Vector2;
-import view.Constants;
 
 import java.util.ArrayList;
-import java.util.Random;
 
 public class ChessBoardController {
 
     private Board board;
-    private ChessPiece lastCapturedPiece;
     private boolean isTimerActivated;
-    private float time;
-    private float startTime;
-    private float timeStep;
 
     public ChessBoardController(Board board){
         this.board = board;
-        setCombatChess(true);// todo user choice
     }
-
-
 
     /** Sets if a tile is highlighted
      * @param tilePos positions of the tiles to be changed
@@ -69,39 +54,7 @@ public class ChessBoardController {
      * @return true if the piece was moved, else false
      */
     public boolean movePiece(ArrayList<String> legalMoves, int oldRow, int oldColumn, int newRow, int newColumn) {
-
-        String newPos = newRow + "," + newColumn;
-
-        if (legalMoves.contains(newPos)) {
-            ChessPiece chessPiece = board.getTile(oldRow, oldColumn).removePiece();
-            if(chessPiece instanceof Pawn){
-                if(Math.abs(newRow-oldRow) == 2){
-                    Pawn pawn = (Pawn) chessPiece;
-                    pawn.setPassantable(true);
-                }
-                if(oldColumn != newColumn && !getTile(newRow, newColumn).hasPiece()) {
-                    updateLastCapturedPiece(oldRow, newColumn);
-                }
-                else updateLastCapturedPiece(newRow, newColumn);
-            }
-            else
-                updateLastCapturedPiece(newRow, newColumn);
-
-            board.setPiece(newRow, newColumn, chessPiece, false);
-            return true;
-        }
-        return false;
-    }
-
-    /** Updates the last captured piece if the last moved captured a piece
-     * @param newRow row index of last move
-     * @param newColumn column index of last move
-     */
-    private void updateLastCapturedPiece(int newRow, int newColumn) {
-        ChessPiece removedPiece = board.getTile(newRow, newColumn).removePiece();
-        if(removedPiece != null){
-            lastCapturedPiece = removedPiece;
-        }
+        return board.movePiece(legalMoves, oldRow, oldColumn, newRow, newColumn);
     }
 
     /** Checks if this state is check mate
@@ -181,7 +134,7 @@ public class ChessBoardController {
     }
 
     public ChessPiece getLastCapturedPiece() {
-        return lastCapturedPiece;
+        return board.getLastCapturedPiece();
     }
 
     public void setBoardSprite(Sprite boardSprite) {
@@ -211,15 +164,6 @@ public class ChessBoardController {
 
     public PowerUp getPowerUp(int row, int column) {
         return board.getPowerUp(row, column);
-    }
-
-    /** Sets a piece at this location
-     * @param row vertical index
-     * @param column horizontal index
-     * @param chessPiece the chess piece to be added
-     */
-    public void setPiece(int row, int column, ChessPiece chessPiece) {
-        board.setPiece(row, column, chessPiece, false);
     }
 
 

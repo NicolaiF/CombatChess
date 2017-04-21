@@ -2,12 +2,10 @@ package model.powerups;
 
 import android.animation.ValueAnimator;
 
-import controller.ChessBoardController;
 import interfaces.AbstractPieceFactory;
 import interfaces.PowerUp;
 import main.R;
 import model.Board;
-import model.factories.pieces.PieceFactory;
 import model.pieces.ChessPiece;
 import model.pieces.King;
 import sheep.game.Sprite;
@@ -62,7 +60,7 @@ public class Upgrade implements PowerUp {
     public void activatePowerUp(Board board, ChessPiece chessPiece, int row, int column) {
         AbstractPieceFactory factory = board.getPieceFactory();
         if(!(chessPiece instanceof King)){
-            board.setPiece(row ,column, (ChessPiece) factory.createQueen(chessPiece.isWhite()), false);
+            board.setPiece(row ,column, (ChessPiece) factory.createQueen(chessPiece.isWhite()));
         }
     }
 
