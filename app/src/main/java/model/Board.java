@@ -260,11 +260,13 @@ public class Board {
                         legalMoves.add(newRow + "," + newColumn);
                     }
                 } else {
+                    //Return if the piece is pawn
+                    if ((chessPiece instanceof Pawn))
+                        return legalMoves;
                     boolean isFriendlyPiece = tile.getPiece().isWhite() == chessPiece.isWhite();
                     //Continue if there is a friendly piece
-                    if (isFriendlyPiece) continue;
-                    //Return if the piece is pawn
-                    if ((chessPiece instanceof Pawn)) return legalMoves;
+                    if (isFriendlyPiece)
+                        continue;
                     // Simulate move and check if it is a legal state
                     if (isLegalMove(row, column, newRow, newColumn)) {
                         legalMoves.add(newRow + "," + newColumn);
