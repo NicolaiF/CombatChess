@@ -152,53 +152,59 @@ public class Board {
         return legalMoves;
     }
 
+    /**Checks if piece qualifies for a special move
+     * @param row vertical index in the board
+     * @param column horizontal index in the board
+     * @param chessPiece to test for special moves
+     * @return a list of legal moves
+     */
     private ArrayList<String> findAllSpecialMoves(int row, int column, ChessPiece chessPiece) {
         ArrayList<String> legalMoves = new ArrayList<>();
-        if (chessPiece instanceof King) {
-            // Checking if allied king is attacked before the move
-            boolean isLegal = isAlliedKingAttacked(chessPiece.isWhite());
-            if (!isLegal)
-                return legalMoves;
-            if (chessPiece.isWhite()) {
-                legalMoves.addAll(findRocadeMoveForRook(7, 4, 2, 0, 3, true));
-                legalMoves.addAll(findRocadeMoveForRook(7, 4, 6, 7, 5, true));
-            }
-            else
-            {
-                legalMoves.addAll(findRocadeMoveForRook(0, 4, 2, 0, 3, false));
-                legalMoves.addAll(findRocadeMoveForRook(0, 4, 6, 7, 5, false));
-            }
-        }
+
+        if (chessPiece instanceof King)
+            legalMoves.addAll(findRocadeMoves((King)chessPiece));
+
         if(chessPiece instanceof Pawn){
-            legalMoves.addAll(FindPassantMove(row, column, 1, chessPiece));
-            legalMoves.addAll(FindPassantMove(row, column, -1, chessPiece));
+            legalMoves.addAll(findPassantMove(row, column, 1, (Pawn) chessPiece));
+            legalMoves.addAll(findPassantMove(row, column, -1,(Pawn) chessPiece));
         }
         return legalMoves;
     }
 
-    private ArrayList<String> FindPassantMove(int row, int column, int columnOffset, ChessPiece chessPiece) {
+    /**Returns a list of available rocade moves for the king
+     * @param king the king to check if can do a rocade
+     * @return a list of legal moves
+     */
+    private ArrayList<String> findRocadeMoves(King king) {
         ArrayList<String> legalMoves = new ArrayList<>();
-        Tile tile = getTile(row, column + columnOffset);
-        if(tile != null) {
-            Piece piece = tile.getPiece();
-            if (piece != null) {
-                if (piece.isWhite() != chessPiece.isWhite()) {
-                    if (piece instanceof Pawn) {
-                        Pawn pawn = (Pawn) piece;
-                        if (pawn.isPassantable()) {
-                            int rowOffset = chessPiece.getLegalMoves().get(0).getRowOffset();
-                            legalMoves.add((row + rowOffset) + "," + (column + columnOffset));
-                        }
-                    }
-                }
-            }
+        // Checking if allied king is attacked before the move
+        boolean isLegal = isAlliedKingAttacked(king.isWhite());
+        if (!isLegal)
+            return legalMoves;
+        if (king.isWhite()) {
+            legalMoves.addAll(findRocadeMoveForRook(7, 4, 2, 0, 3, true));
+            legalMoves.addAll(findRocadeMoveForRook(7, 4, 6, 7, 5, true));
+        }
+        else
+        {
+            legalMoves.addAll(findRocadeMoveForRook(0, 4, 2, 0, 3, false));
+            legalMoves.addAll(findRocadeMoveForRook(0, 4, 6, 7, 5, false));
         }
         return legalMoves;
     }
 
+    /**
+     * @param row vertical index in the board
+     * @param kingColumn initial column position of king
+     * @param newKingColumn new column position for king, if moved by rocade
+     * @param rookColumn initial column position of rook
+     * @param newRookColumn new column position for rook, if moved by rocade
+     * @param isWhite true if white, else false
+     * @return a list of legal moves
+     */
     private ArrayList<String> findRocadeMoveForRook(int row, int kingColumn, int newKingColumn, int rookColumn, int newRookColumn, boolean isWhite) {
         ArrayList<String> legalMoves = new ArrayList<>();
-        if (isRookUnmoved(row, rookColumn, isWhite)) {
+        if (isRookPosValidForRocade(row, rookColumn, isWhite)) {
             if (tilesQualifyForRocade(row, rookColumn, isWhite)) {
                 if (isLegalMove(row, kingColumn, row, newKingColumn) && isLegalMove(row, rookColumn, row, newRookColumn))
                     legalMoves.add(row + "," + newKingColumn);
@@ -207,30 +213,13 @@ public class Board {
         return legalMoves;
     }
 
-    private boolean tilesQualifyForRocade(int row, int rookColumn, boolean isWhite){
-        if(rookColumn > 5) {
-            for (int i = 5; i < 7; i++) {
-                Tile tile = getTile(row, i);
-                if (tileDoesNotQualfyForRocade(row, rookColumn, isWhite, tile)) return false;
-            }
-        }else {
-            for (int i = 3; i > 1; i--) {
-                Tile tile = getTile(row, i);
-                if (tileDoesNotQualfyForRocade(row, rookColumn, isWhite, tile)) return false;
-            }
-        }
-        return true;
-    }
-
-    private boolean tileDoesNotQualfyForRocade(int row, int column, boolean isWhite, Tile tile) {
-        if(tile.hasPiece())
-            return true;
-        if(isTileAttacked(isWhite, row, column))
-            return true;
-        return false;
-    }
-
-    private boolean isRookUnmoved(int row, int column, boolean isWhite){
+    /**
+     * @param row vertical index in the board
+     * @param column horizontal index in the board
+     * @param isWhite true if the color is white
+     * @return true if rook position qualifies for rocade, else false
+     */
+    private boolean isRookPosValidForRocade(int row, int column, boolean isWhite){
         Tile tile = getTile(row, column);
         ChessPiece piece = tile.getPiece();
         if(piece == null || !(piece instanceof Rook) || piece.isWhite() != isWhite)
@@ -240,6 +229,78 @@ public class Board {
             return false;
         return true;
     }
+
+    /**
+     * @param row vertical index in the board
+     * @param column horizontal index in the board
+     * @param isWhite true if the color is white
+     * @return true if all the tiles qualifies for rocade
+     */
+    private boolean tilesQualifyForRocade(int row, int column, boolean isWhite){
+        if(column > 5) {
+            for (int i = 5; i < 7; i++) {
+                Tile tile = getTile(row, i);
+                if (tileDoesNotQualfyForRocade(row, i, isWhite, tile))
+                    return false;
+            }
+        }else {
+            for (int i = 3; i > 1; i--) {
+                Tile tile = getTile(row, i);
+                if (tileDoesNotQualfyForRocade(row, i, isWhite, tile))
+                    return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * @param row vertical index in the board
+     * @param column horizontal index in the board
+     * @param isWhite true if the color is white
+     * @param tile the tile to be analysed
+     * @return returns true if tile is threatened by enemy, or has piece. else false
+     */
+    private boolean tileDoesNotQualfyForRocade(int row, int column, boolean isWhite, Tile tile) {
+        if(tile.hasPiece())
+            return true;
+        if(isTileAttacked(isWhite, row, column))
+            return true;
+        return false;
+    }
+
+    /**
+     * @param row vertical index in the board
+     * @param column horizontal index in the board
+     * @param columnOffset the offset column to look for another pawn in
+     * @param pawn the pawn to check if can do a passant move
+     * @return a list of legal moves
+     */
+    private ArrayList<String> findPassantMove(int row, int column, int columnOffset, Pawn pawn) {
+        ArrayList<String> legalMoves = new ArrayList<>();
+        Tile tile = getTile(row, column + columnOffset);
+        if(tile != null) {
+            Piece piece = tile.getPiece();
+            if (piece != null) {
+                if (piece.isWhite() != pawn.isWhite()) {
+                    if (piece instanceof Pawn) {
+                        Pawn enemyPawn = (Pawn) piece;
+                        if (enemyPawn.isPassantable()) {
+                            int rowOffset = pawn.getLegalMoves().get(0).getRowOffset();
+                            legalMoves.add((row + rowOffset) + "," + (column + columnOffset));
+                        }
+                    }
+                }
+            }
+        }
+        return legalMoves;
+    }
+
+    /** return a list of legal moves for a piece
+     * @param row vertical index in the board
+     * @param column horizontal index in the board
+     * @param chessPiece the piece to analyse the moves for
+     * @return A list of legal moves for this piece
+     */
     private ArrayList<String> findAllLegalMoves(int row, int column, ChessPiece chessPiece) {
         ArrayList<String> legalMoves = new ArrayList<>();
         ArrayList<Move> moves = chessPiece.getLegalMoves();
@@ -278,14 +339,22 @@ public class Board {
         return legalMoves;
     }
 
+    /** returns a list of legal moves
+     * @param row vertical index on the board
+     * @param column horizontal index on the board
+     * @param chessPiece piece to find continuous moves for
+     * @param move direction on the board to look for continuous moves for
+     * @param tile the tile the piece is positioned at
+     * @return a list of legal moves
+     */
     private ArrayList<String> findAllContinuousLegalMoves(int row, int column, ChessPiece chessPiece, Move move, Tile tile) {
         ArrayList<String> legalMoves = new ArrayList<>();
         int newRow = row + move.getRowOffset();
         int newColumn = column + move.getColumnOffset();
         while(tile != null){
             // Checking if this tile contains a piece
-            // Checking if this piece is an allied piece
             if(tile.hasPiece()) {
+                // Checking if this piece is an allied piece
                 if (tile.getPiece().isWhite() == chessPiece.isWhite())
                     break;
                 // Simulate move and check if it is a legal state
@@ -308,6 +377,12 @@ public class Board {
         return legalMoves;
     }
 
+    /** Returns a list of legal moves
+     * @param row vertical index on the board
+     * @param column horizontal index on the board
+     * @param chessPiece the piece to find capture moves for
+     * @return a list of legal moves
+     */
     private ArrayList<String> findAllCaptureMoves(int row, int column, ChessPiece chessPiece) {
         ArrayList<String> legalMoves = new ArrayList<>();
         ArrayList<Move> moves = chessPiece.getCaptureMoves();
@@ -472,6 +547,9 @@ public class Board {
         return isCheckMate;
     }
 
+    /** sets passantable to false on pawns
+     * @param isWhite decides if white or black shall be reset
+     */
     private void resetAllPassantablePawns(boolean isWhite){
         for (int row = 0; row < 8; row++) {
             for (int column = 0; column < 8; column++) {
