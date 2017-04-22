@@ -320,7 +320,7 @@ public class GameState extends State {
 
                 }
                 for (int i = 0; i < controller.getBlackCaptures().size(); i++) {
-                    blackCaptures.get(i).getSprite().setPosition(blackCaptures.size() * pieceWidth / 2 - pieceWidth / 2 + screenWidth * 0.05f, controller.getBoardSprite().getY() - pieceWidth);
+                    blackCaptures.get(i).getSprite().setPosition(i * pieceWidth / 2 + screenWidth * 0.05f, controller.getBoardSprite().getY() - pieceWidth);
                     blackCaptures.get(i).getSprite().update(0);
                     blackCaptures.get(i).getSprite().draw(canvas);
                 }
