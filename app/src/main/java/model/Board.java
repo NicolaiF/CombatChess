@@ -155,13 +155,6 @@ public class Board {
         return board[row][column];
     }
 
-    /**
-     * @return the board
-     */
-    public Tile[][] getTiles() {
-        return board;
-    }
-
     public ArrayList<ChessPiece> getWhiteCaptures() {
         return whiteCaptures;
     }
@@ -173,11 +166,7 @@ public class Board {
      */
     public boolean hasPiece(int row, int column) {
         Tile tile = getTile(row, column);
-        if (tile != null) {
-            return tile.getPiece() != null;
-        } else {
-            return false;
-        }
+        return tile != null && tile.getPiece() != null;
     }
 
     /**
@@ -276,17 +265,6 @@ public class Board {
     }
 
     /**
-     * Removes the power up in this tile and returns the power up that was removed
-     *
-     * @param row    vertical index
-     * @param column horizontal index
-     * @return the piece that was removed
-     */
-    public PowerUp removePowerUp(int row, int column) {
-        return getTile(row, column).removePowerUp();
-    }
-
-    /**
      * Adds a chess piece in this position of the chess board. The method must find the correct tile and add the
      * chess piece to the tile
      *
@@ -297,18 +275,6 @@ public class Board {
     public void setPiece(int row, int column, ChessPiece chessPiece) {
         getTile(row, column).setPiece(chessPiece);
         updateKingPos(row, column, chessPiece);
-    }
-
-    /**
-     * Adds a power up in this position on the chess board. The method must find the correct tile and add the power
-     * up to the tile
-     *
-     * @param row     vertical index in the board
-     * @param column  horizontal index in the board
-     * @param powerUp The power up to be added
-     */
-    public void setPowerUp(int row, int column, PowerUp powerUp) {
-        getTile(row, column).setPowerUp(powerUp);
     }
 
     public void setPowerUpsActive(boolean powerUpsActive) {
@@ -362,8 +328,7 @@ public class Board {
     }
 
     private void checkAndHandleRocadeMove(int row, int column, King chessPiece) {
-        King king = chessPiece;
-        if (!king.getIsMoved()) {
+        if (!chessPiece.getIsMoved()) {
             if (column == 2) {
                 Tile tile = getTile(row, 0);
                 ChessPiece rook = tile.getPiece();
@@ -654,16 +619,15 @@ public class Board {
         if (piece == null || !(piece instanceof Rook) || piece.isWhite() != isWhite)
             return false;
         Rook rook = (Rook) piece;
-        if (rook.getIsMoved())
-            return false;
-        return true;
+
+        return !rook.getIsMoved();
     }
 
     /**
      * Checking if king is under attack
      *
-     * @param tileRow
-     * @param tileColumn
+     * @param tileRow vertical index in the board of the tile
+     * @param tileColumn orizontal index in the board of the tile
      * @return true if attacked, else false
      */
     private boolean isTileAttacked(boolean isWhite, int tileRow, int tileColumn) {
@@ -826,6 +790,19 @@ public class Board {
         }
     }
 
+
+
+    /**
+     * Removes the power up in this tile and returns the power up that was removed
+     *
+     * @param row    vertical index
+     * @param column horizontal index
+     * @return the piece that was removed
+     */
+    private PowerUp removePowerUp(int row, int column) {
+        return getTile(row, column).removePowerUp();
+    }
+
     /**
      * Changes the theme for the chess pieces
      *
@@ -860,6 +837,19 @@ public class Board {
         }
     }
 
+
+    /**
+     * Adds a power up in this position on the chess board. The method must find the correct tile and add the power
+     * up to the tile
+     *
+     * @param row     vertical index in the board
+     * @param column  horizontal index in the board
+     * @param powerUp The power up to be added
+     */
+    private void setPowerUp(int row, int column, PowerUp powerUp) {
+        getTile(row, column).setPowerUp(powerUp);
+    }
+
     /**
      * @param row     vertical index in the board
      * @param column  horizontal index in the board
@@ -868,11 +858,7 @@ public class Board {
      * @return returns true if tile is threatened by enemy, or has piece. else false
      */
     private boolean tileDoesNotQualfyForRocade(int row, int column, boolean isWhite, Tile tile) {
-        if (tile.hasPiece())
-            return true;
-        if (isTileAttacked(isWhite, row, column))
-            return true;
-        return false;
+        return tile.hasPiece() || isTileAttacked(isWhite, row, column);
     }
 
     /**
