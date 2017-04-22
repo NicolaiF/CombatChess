@@ -137,7 +137,7 @@ public class Board {
             if (chessPiece.isWhite() && newRow == 0)
                 chessPiece = (ChessPiece) pieceFactory.createQueen(true);
 
-            if (!chessPiece.isWhite() && newColumn == 7)
+            if (!chessPiece.isWhite() && newRow == 7)
                 chessPiece = (ChessPiece) pieceFactory.createQueen(false);
         }
 
