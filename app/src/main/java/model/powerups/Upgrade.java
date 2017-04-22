@@ -27,7 +27,7 @@ public class Upgrade implements PowerUp {
 
     private void initValueAnimator() {
         //Setting up the chopper animation
-        va.setDuration(100);
+        va.setDuration(1000);
         va.setIntValues(R.drawable.power_rod_i, R.drawable.power_rod_ii, R.drawable.power_rod_iii, R.drawable.power_rod_iv, R.drawable.power_rod_v, R.drawable.power_rod_vi,
                 R.drawable.power_rod_vii, R.drawable.power_rod_viii, R.drawable.power_rod_ix,  R.drawable.power_rod_x, R.drawable.power_rod_xi, R.drawable.power_rod_xii);
         va.setRepeatCount(ValueAnimator.INFINITE);

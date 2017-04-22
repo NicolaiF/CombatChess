@@ -14,6 +14,7 @@ import model.pieces.Queen;
 import model.pieces.Rook;
 import model.powerups.Upgrade;
 import sheep.game.Sprite;
+import view.Constants;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,16 +23,17 @@ import java.util.Map;
 public class Board {
 
     private Tile[][] board = new Tile[8][8];
-    private String[] colors = new String[2];
     private AbstractPieceFactory pieceFactory = new ClassicFillFactory();
     private AbstractBoardFactory boardFactory = new FillFactory();
     private Map<String, String> intsToPositionDictionary = new HashMap<>();
+    private boolean isPowerUpsActive;
     private int[] posWhiteKing;
     private int[] posBlackKing;
-    private Sprite boardSprite;
-    private boolean isPowerUpsActive;
     private int movesSinceLastPowerUp;
     private ChessPiece lastCapturedPiece;
+    private Sprite boardSprite;
+    private ArrayList<ChessPiece> blackCaptures = new ArrayList<>();
+    private ArrayList<ChessPiece> whiteCaptures = new ArrayList<>();
 
     public Board() {
 
@@ -154,7 +156,33 @@ public class Board {
         //Reset all passantable pawns on enemy side after move
         resetAllPassantablePawns(!chessPiece.isWhite());
         chessPiece.moved();
+
+        // Updating captured pieces
+        addCapturedPiece();
+
         return true;
+    }
+
+    /**
+     * Adds captured piece to white or black captures
+     */
+    private void addCapturedPiece() {
+        // Checking if new piece was captured
+        ChessPiece capturedPiece = getLastCapturedPiece();
+        if(capturedPiece != null){
+            if(capturedPiece.isWhite()){
+
+                if(!blackCaptures.contains(capturedPiece)) {
+                    blackCaptures.add(capturedPiece);
+
+
+                }
+            } else {
+                if(!whiteCaptures.contains(capturedPiece)){
+                    whiteCaptures.add(capturedPiece);
+                }
+            }
+        }
     }
 
     /**
@@ -746,17 +774,6 @@ public class Board {
     }
 
     /**
-     * Sets the colors for the chess board. The strings should be hexadecimals #XXXXXX
-     *
-     * @param firstColor  The color for A8, C8, ...
-     * @param secondColor The color for B8, D8, ...
-     */
-    public void setColors(String firstColor, String secondColor) {
-        colors[0] = firstColor;
-        colors[1] = secondColor;
-    }
-
-    /**
      * @param row    vertical index in board
      * @param column horizontal index in board
      * @return the tile in this pos, null if none
@@ -783,37 +800,54 @@ public class Board {
     public void setPieceFactory(AbstractPieceFactory pieceFactory) {
         this.pieceFactory = pieceFactory;
 
-        for (Tile[] row : board) {
+        // Updating theme for pieces
+        ArrayList<ChessPiece> pieces = new ArrayList<>();
 
+        for (Tile[] row : board) {
             for (Tile tile : row) {
                 ChessPiece chessPiece = tile.getPiece();
                 // Checks if this tile contains a piece
                 if (chessPiece != null) {
-                    boolean isWhite = chessPiece.isWhite();
-                    Sprite oldSprite = tile.getPiece().getSprite();
-
-                    if (chessPiece instanceof Pawn) {
-                        chessPiece.setSprite(pieceFactory.createPawnSprite(isWhite));
-                    } else if (chessPiece instanceof Knight) {
-                        chessPiece.setSprite(pieceFactory.createKnightSprite(isWhite));
-                    } else if (chessPiece instanceof Bishop) {
-                        chessPiece.setSprite(pieceFactory.createBishopSprite(isWhite));
-                    } else if (chessPiece instanceof Queen) {
-                        chessPiece.setSprite(pieceFactory.createQueenSprite(isWhite));
-                    } else if (chessPiece instanceof King) {
-                        chessPiece.setSprite(pieceFactory.createKingSprite(isWhite));
-                    } else if (chessPiece instanceof Rook) {
-                        chessPiece.setSprite(pieceFactory.createRookSprite(isWhite));
-                    }
-
-                    // Setting position and scaling new sprite
-                    Sprite newSprite = chessPiece.getSprite();
-                    newSprite.setOffset(0, 0);
-                    newSprite.setPosition(oldSprite.getX(), oldSprite.getY());
-                    newSprite.setScale(oldSprite.getScale());
-                    newSprite.update(0);
+                    pieces.add(chessPiece);
                 }
             }
+        }
+
+        setNewPieceTheme(pieces);
+        setNewPieceTheme(blackCaptures);
+        setNewPieceTheme(whiteCaptures);
+
+    }
+
+    /** Changes the theme for the chess pieces
+     * @param pieces the pieces to be updated
+     */
+    private void setNewPieceTheme(ArrayList<ChessPiece> pieces){
+        // Updating captured pieces
+        for (ChessPiece chessPiece : pieces) {
+
+            Sprite oldSprite = chessPiece.getSprite();
+            boolean isWhite = chessPiece.isWhite();
+
+            if (chessPiece instanceof Pawn) {
+                chessPiece.setSprite(pieceFactory.createPawnSprite(isWhite));
+            } else if (chessPiece instanceof Knight) {
+                chessPiece.setSprite(pieceFactory.createKnightSprite(isWhite));
+            } else if (chessPiece instanceof Bishop) {
+                chessPiece.setSprite(pieceFactory.createBishopSprite(isWhite));
+            } else if (chessPiece instanceof Queen) {
+                chessPiece.setSprite(pieceFactory.createQueenSprite(isWhite));
+            } else if (chessPiece instanceof King) {
+                chessPiece.setSprite(pieceFactory.createKingSprite(isWhite));
+            } else if (chessPiece instanceof Rook) {
+                chessPiece.setSprite(pieceFactory.createRookSprite(isWhite));
+            }
+            // Setting position and scaling new sprite
+            Sprite newSprite = chessPiece.getSprite();
+            newSprite.setOffset(0, 0);
+            newSprite.setPosition(oldSprite.getX(), oldSprite.getY());
+            newSprite.setScale(oldSprite.getScale());
+            newSprite.update(0);
         }
     }
 
@@ -880,5 +914,13 @@ public class Board {
 
     public ChessPiece getLastCapturedPiece() {
         return lastCapturedPiece;
+    }
+
+    public ArrayList<ChessPiece> getBlackCaptures(){
+        return blackCaptures;
+    }
+
+    public ArrayList<ChessPiece> getWhiteCaptures(){
+        return whiteCaptures;
     }
 }

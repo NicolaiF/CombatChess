@@ -166,6 +166,13 @@ public class ChessBoardController {
         return board.getPowerUp(row, column);
     }
 
+    public ArrayList<ChessPiece> getWhiteCaptures(){
+        return board.getWhiteCaptures();
+    }
+
+    public ArrayList<ChessPiece> getBlackCaptures(){
+        return board.getBlackCaptures();
+    }
 
     public boolean isTimerActivated() {
         return isTimerActivated;

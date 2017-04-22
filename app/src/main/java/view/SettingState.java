@@ -143,12 +143,10 @@ public class SettingState extends State {
                     Sprite oldWKing = whiteKing;
                     whiteKing = pieceFactories.get(pieceIndex).createKingSprite(true);
                     adjustSprite(whiteKing, oldWKing.getScale(), oldWKing.getOffset(), oldWKing.getPosition());
-                    whiteKing.update(0);
 
                     Sprite oldBBlack = blackKing;
                     blackKing = pieceFactories.get(pieceIndex).createKingSprite(false);
                     adjustSprite(blackKing, oldBBlack.getScale(), oldBBlack.getOffset(), oldBBlack.getPosition());
-                    blackKing.update(0);
 
                     return true;
                 }
@@ -282,6 +280,7 @@ public class SettingState extends State {
         sprite.setScale(scale);
         sprite.setOffset(offset);
         sprite.setPosition(position);
+        sprite.update(0);
     }
 
     @Override

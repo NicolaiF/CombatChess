@@ -175,27 +175,6 @@ public class GameState extends State {
         screenHeight = size.y;
     }
 
-    private void addCapturedPiece() {
-        // Checking if new piece was captured
-        ChessPiece capturedPiece = controller.getLastCapturedPiece();
-        if(capturedPiece != null){
-            if(capturedPiece.isWhite()){
-                if(!blackCaptures.contains(capturedPiece)) {
-                    blackCaptures.add(capturedPiece);
-                    capturedPiece.getSprite().setPosition(blackCaptures.size()*pieceWidth/2 - pieceWidth/2 + screenWidth*0.05f, controller.getBoardSprite().getY() - pieceWidth);
-                    capturedPiece.getSprite().setOffset(0,0);
-                    capturedPiece.getSprite().update(0);
-                }
-            } else {
-                if(!whiteCaptures.contains(capturedPiece)){
-                    whiteCaptures.add(capturedPiece);
-                    capturedPiece.getSprite().setPosition(whiteCaptures.size()*pieceWidth/2 - pieceWidth/2 + + screenWidth*0.05f, controller.getBoardSprite().getY() + boardHeight);
-                    capturedPiece.getSprite().update(0);
-                }
-            }
-        }
-    }
-
     private boolean onChessPieceSelected(int column, int row) {
         // Updating position of selected piece
         int[] index = new int[2];
@@ -227,6 +206,7 @@ public class GameState extends State {
 
             for (int column = 0; column < 8; column++) {
 
+                // Drawing highlighted tiles
                 if(controller.isTileHighlighted(row, column)){
                     Sprite sprite = controller.getTile(row, column).getHighlightSprite();
                     controller.adjustSprite(sprite, new Vector2(pieceScale, pieceScale), new Vector2(0,0), new Vector2(column * pieceWidth, (screenHeight-screenWidth)/2 + row * pieceWidth));
@@ -234,17 +214,35 @@ public class GameState extends State {
                     sprite.draw(canvas);
                 }
 
+                // Drawing pieces
                 if(controller.hasPiece(row, column)){
                     Sprite sprite = controller.getPiece(row, column).getSprite();
                     controller.adjustSprite(sprite, new Vector2(pieceScale, pieceScale), new Vector2(0,0), new Vector2(column * pieceWidth, (screenHeight-screenWidth)/2 + row * pieceWidth ));
                     sprite.update(0);
                     sprite.draw(canvas);
                 }
+
+                // Drawing power ups
                 if(controller.hasPowerUp(row, column)){
                     Sprite sprite = controller.getPowerUp(row, column).getSprite();
                     controller.adjustSprite(sprite, new Vector2(pieceScale, pieceScale), new Vector2(0,0), new Vector2(column * pieceWidth, (screenHeight-screenWidth)/2 + row * pieceWidth ));
                     sprite.update(0);
                     sprite.draw(canvas);
+                }
+
+                // Drawing captured pieces
+                ArrayList<ChessPiece> whiteCaptures = controller.getWhiteCaptures();
+                ArrayList<ChessPiece> blackCaptures = controller.getBlackCaptures();
+                for (int i = 0; i < whiteCaptures.size(); i++) {
+                    whiteCaptures.get(i).getSprite().setPosition(i*pieceWidth/2 + screenWidth*0.05f, controller.getBoardSprite().getY() + boardHeight);
+                    whiteCaptures.get(i).getSprite().update(0);
+                    whiteCaptures.get(i).getSprite().draw(canvas);
+
+                }
+                for (int i = 0; i < controller.getBlackCaptures().size(); i++) {
+                    blackCaptures.get(i).getSprite().setPosition(blackCaptures.size()*pieceWidth/2 - pieceWidth/2 + screenWidth*0.05f, controller.getBoardSprite().getY() - pieceWidth);
+                    blackCaptures.get(i).getSprite().update(0);
+                    blackCaptures.get(i).getSprite().draw(canvas);
                 }
             }
         }
@@ -277,8 +275,6 @@ public class GameState extends State {
             newPos[0] = row;
             newPos[1] = column;
             if(controller.movePiece(legalMoves, posSelectedPiece[0], posSelectedPiece[1], newPos[0], newPos[1])){
-                // Updating captured pieces
-                addCapturedPiece();
 
                 // Checking for check mate
                 if(controller.isCheckMate(whiteTurn)){
@@ -313,13 +309,14 @@ public class GameState extends State {
      * @param whiteTurn true if white player won
      */
     private void handleWin(boolean whiteTurn) {
-        // Creating a text box which informs the winner
-        Paint paint = new Paint();
-        int textSize = (int) pieceWidth;
-        paint.setTextSize(textSize);
+        // Creating a image that informs the winner
+        Image imgWon;
+        if(whiteTurn) { imgWon = new Image(R.drawable.victory_white);
+        } else { imgWon = new Image(R.drawable.victory_black);}
 
-        Font font = new Font(255, 255, 255, textSize, Typeface.DEFAULT, Typeface.BOLD);
-        TextButton btnWin = new TextButton(screenWidth/2 - paint.measureText("White wins!")/2, screenHeight/2, whiteTurn ? "White wins!" : "Black wins!", new Paint[]{font, font}){
+        float scale = screenWidth/imgWon.getWidth()*1.5f;
+
+        ImageButton btnWin = new ImageButton(imgWon, (int) (screenWidth/2 - imgWon.getWidth()*scale/2), (int) (screenHeight/2 - imgWon.getHeight()*scale/2), scale){
             @Override
             public boolean onTouchDown(MotionEvent motionEvent){
                 if(getBoundingBox().contains(motionEvent.getX(), motionEvent.getY())){
