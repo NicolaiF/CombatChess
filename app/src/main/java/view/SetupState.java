@@ -69,10 +69,10 @@ public class SetupState extends State {
 
         // Adjusting images
         controller.adjustSprite(bg, new Vector2(scaleBg, scaleBg), new Vector2(0,0), new Vector2(0,0));
-        controller.adjustSprite(spriteCombatChessOff, new Vector2(scale, scale), new Vector2(0,0), new Vector2(screenWidth/2 - imgCombatChessOff.getWidth()*scale/2, (float) (screenHeight * 0.3)  - imgCombatChessOff.getHeight()*scale/2 + arrowHeight/2));
-        controller.adjustSprite(spriteCombatChessOn, new Vector2(scale, scale), new Vector2(0,0), new Vector2(screenWidth/2 - imgCombatChessOn.getWidth()*scale/2, (float) (screenHeight * 0.3)  - imgCombatChessOn.getHeight()*scale/2  + arrowHeight/2));
-        controller.adjustSprite(spriteNoTimer, new Vector2(scale, scale), new Vector2(0,0), new Vector2(screenWidth/2 - imgNoTimer.getWidth()*scale/2, (float) (screenHeight*0.5) - imgNoTimer.getHeight()*scale/2  + arrowHeight/2));
-        controller.adjustSprite(spriteTimer, new Vector2(scale, scale), new Vector2(0,0), new Vector2(screenWidth/2 - imgTimer.getWidth()*scale/2, (float) (screenHeight*0.5)  - imgTimer.getHeight()*scale/2  + arrowHeight/2));
+        controller.adjustSprite(spriteCombatChessOff, new Vector2(scale, scale), new Vector2(0,0), new Vector2(screenWidth/2 - imgCombatChessOff.getWidth()*scale/2, (float) (screenHeight * 0.25)  - imgCombatChessOff.getHeight()*scale/2 + arrowHeight/2));
+        controller.adjustSprite(spriteCombatChessOn, new Vector2(scale, scale), new Vector2(0,0), new Vector2(screenWidth/2 - imgCombatChessOn.getWidth()*scale/2, (float) (screenHeight * 0.25)  - imgCombatChessOn.getHeight()*scale/2  + arrowHeight/2));
+        controller.adjustSprite(spriteNoTimer, new Vector2(scale, scale), new Vector2(0,0), new Vector2(screenWidth/2 - imgNoTimer.getWidth()*scale/2, (float) (screenHeight*0.45) - imgNoTimer.getHeight()*scale/2  + arrowHeight/2));
+        controller.adjustSprite(spriteTimer, new Vector2(scale, scale), new Vector2(0,0), new Vector2(screenWidth/2 - imgTimer.getWidth()*scale/2, (float) (screenHeight*0.45)  - imgTimer.getHeight()*scale/2  + arrowHeight/2));
     }
 
     private void createButtons() {
@@ -103,7 +103,7 @@ public class SetupState extends State {
                 }
             }
         };
-        ImageButton btnNextPowerUp = new ImageButton(imgNext, (int) (0.9*(screenWidth- imgPrev.getWidth()*buttonScale)), (int) (screenHeight*0.3), buttonScale){
+        ImageButton btnNextPowerUp = new ImageButton(imgNext, (int) (0.9*(screenWidth- imgPrev.getWidth()*buttonScale)), (int) (screenHeight*0.25), buttonScale){
             @Override
             public boolean onTouchDown(MotionEvent motionEvent){
                 if(getBoundingBox().contains(motionEvent.getX(), motionEvent.getY())){
@@ -114,7 +114,7 @@ public class SetupState extends State {
                 return false;
             }
         };
-        ImageButton btnPrevPowerUp = new ImageButton(imgPrev, (int) (0.1*(screenWidth- imgPrev.getWidth()*buttonScale)), (int) (screenHeight*0.3), buttonScale){
+        ImageButton btnPrevPowerUp = new ImageButton(imgPrev, (int) (0.1*(screenWidth- imgPrev.getWidth()*buttonScale)), (int) (screenHeight*0.25), buttonScale){
             @Override
             public boolean onTouchDown(MotionEvent motionEvent){
                 if(getBoundingBox().contains(motionEvent.getX(), motionEvent.getY())){
@@ -125,7 +125,7 @@ public class SetupState extends State {
                 return false;
             }
         };
-        ImageButton btnPrevTime = new ImageButton(imgPrev, (int) (0.1*(screenWidth- imgPrev.getWidth()*buttonScale)), (int) (screenHeight*0.5), buttonScale){
+        ImageButton btnPrevTime = new ImageButton(imgPrev, (int) (0.1*(screenWidth- imgPrev.getWidth()*buttonScale)), (int) (screenHeight*0.45), buttonScale){
             @Override
             public boolean onTouchDown(MotionEvent motionEvent){
                 if(getBoundingBox().contains(motionEvent.getX(), motionEvent.getY())){
@@ -136,7 +136,7 @@ public class SetupState extends State {
                 return false;
             }
         };
-        ImageButton btnNextTime = new ImageButton(imgNext, (int) (0.9*(screenWidth- imgNext.getWidth()*buttonScale)), (int) (screenHeight*0.5), buttonScale){
+        ImageButton btnNextTime = new ImageButton(imgNext, (int) (0.9*(screenWidth- imgNext.getWidth()*buttonScale)), (int) (screenHeight*0.45), buttonScale){
             @Override
             public boolean onTouchDown(MotionEvent motionEvent){
                 if(getBoundingBox().contains(motionEvent.getX(), motionEvent.getY())){

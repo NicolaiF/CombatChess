@@ -4,6 +4,7 @@ import android.util.Log;
 
 import interfaces.*;
 import model.factories.boards.FillFactory;
+import model.factories.boards.WoodFactory;
 import model.factories.pieces.ClassicFillFactory;
 import model.pieces.Bishop;
 import model.pieces.ChessPiece;
@@ -24,7 +25,7 @@ public class Board {
 
     private Tile[][] board = new Tile[8][8];
     private AbstractPieceFactory pieceFactory = new ClassicFillFactory();
-    private AbstractBoardFactory boardFactory = new FillFactory();
+    private AbstractBoardFactory boardFactory = new WoodFactory();
     private Map<String, String> intsToPositionDictionary = new HashMap<>();
     private boolean isPowerUpsActive;
     private int[] posWhiteKing;

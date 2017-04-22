@@ -15,9 +15,12 @@ import interfaces.AbstractBoardFactory;
 import interfaces.AbstractPieceFactory;
 import main.R;
 import model.factories.boards.FillFactory;
+import model.factories.boards.RedFactory;
 import model.factories.boards.WoodFactory;
+import model.factories.boards.YellowFactory;
 import model.factories.pieces.ClassicFillFactory;
 import model.factories.pieces.ClassicWoodFactory;
+import model.factories.pieces.ClassicStoneFactory;
 import sheep.game.Game;
 import sheep.game.Sprite;
 import sheep.game.State;
@@ -101,16 +104,6 @@ public class SettingState extends State {
         sprite.update(0);
     }
 
-    private void collectScreenData() {
-        // Getting the size of the screen
-        WindowManager wm = (WindowManager) getGame().getContext().getSystemService(Context.WINDOW_SERVICE);
-        Display display = wm.getDefaultDisplay();
-        Point size = new Point();
-        display.getSize(size);
-        screenWidth = size.x;
-        screenHeight = size.y;
-    }
-
     private void createButtons() {
 
         Image imageContinue = new Image(R.drawable.button_continue);
@@ -133,7 +126,7 @@ public class SettingState extends State {
                 }
             }
         };
-        ImageButton buttonPrevPieceStyle = new ImageButton(imagePrev, (int) (0.1 * (screenWidth - imagePrev.getWidth() * buttonScale)), (int) (screenHeight * 0.3), buttonScale) {
+        ImageButton buttonPrevPieceStyle = new ImageButton(imagePrev, (int) (0.1 * (screenWidth - imagePrev.getWidth() * buttonScale)), (int) (screenHeight * 0.25), buttonScale) {
             @Override
             public boolean onTouchDown(MotionEvent motionEvent) {
                 if (getBoundingBox().contains(motionEvent.getX(), motionEvent.getY())) {
@@ -161,7 +154,7 @@ public class SettingState extends State {
                 return false;
             }
         };
-        ImageButton buttonPrevBoardStyle = new ImageButton(imagePrev, (int) (0.1 * (screenWidth - imagePrev.getWidth() * buttonScale)), (int) (screenHeight * 0.50), buttonScale) {
+        ImageButton buttonPrevBoardStyle = new ImageButton(imagePrev, (int) (0.1 * (screenWidth - imagePrev.getWidth() * buttonScale)), (int) (screenHeight * 0.45), buttonScale) {
             @Override
             public boolean onTouchDown(MotionEvent motionEvent) {
                 if (getBoundingBox().contains(motionEvent.getX(), motionEvent.getY())) {
@@ -186,7 +179,7 @@ public class SettingState extends State {
                 return false;
             }
         };
-        ImageButton buttonNextPieceStyle = new ImageButton(imageNext, (int) (0.9 * (screenWidth - imageNext.getWidth() * buttonScale)), (int) (screenHeight * 0.3), buttonScale) {
+        ImageButton buttonNextPieceStyle = new ImageButton(imageNext, (int) (0.9 * (screenWidth - imageNext.getWidth() * buttonScale)), (int) (screenHeight * 0.25), buttonScale) {
             @Override
             public boolean onTouchDown(MotionEvent motionEvent) {
                 if (getBoundingBox().contains(motionEvent.getX(), motionEvent.getY())) {
@@ -213,7 +206,7 @@ public class SettingState extends State {
                 return false;
             }
         };
-        ImageButton buttonNextBoardStyle = new ImageButton(imageNext, (int) (0.9 * (screenWidth - imageNext.getWidth() * buttonScale)), (int) (screenHeight * 0.50), buttonScale) {
+        ImageButton buttonNextBoardStyle = new ImageButton(imageNext, (int) (0.9 * (screenWidth - imageNext.getWidth() * buttonScale)), (int) (screenHeight * 0.45), buttonScale) {
             @Override
             public boolean onTouchDown(MotionEvent motionEvent) {
                 if (getBoundingBox().contains(motionEvent.getX(), motionEvent.getY())) {
@@ -252,10 +245,13 @@ public class SettingState extends State {
         // Adding piece factories
         pieceFactories.add(new ClassicFillFactory());
         pieceFactories.add(new ClassicWoodFactory());
+        pieceFactories.add(new ClassicStoneFactory());
 
         // Adding board factories
         boardFactories.add(new FillFactory());
         boardFactories.add(new WoodFactory());
+        boardFactories.add(new RedFactory());
+        boardFactories.add(new YellowFactory());
 
         // Getting the right index
         for (int i = 0; i < pieceFactories.size(); i++) {
@@ -293,15 +289,15 @@ public class SettingState extends State {
         adjustSprite(spriteBg, new Vector2(bgScale, bgScale), new Vector2(0, 0), new Vector2(0, 0));
 
         float xPosBoard = screenWidth * 0.5f - imgBoard.getWidth() * boardScale / 2f;
-        float yPosBoard = screenHeight * 0.5f - (imgBoard.getHeight() * boardScale - new Image(R.drawable.right_arrow).getHeight() * buttonScale) / 2f;
+        float yPosBoard = screenHeight * 0.45f - (imgBoard.getHeight() * boardScale - new Image(R.drawable.right_arrow).getHeight() * buttonScale) / 2f;
         adjustSprite(board, new Vector2(boardScale, boardScale), new Vector2(0, 0), new Vector2(xPosBoard, yPosBoard));
 
         float xPosWPawn = screenWidth * 0.4f - imgPiece.getWidth() * pieceScale * 0.5f;
-        float yPosWPawn = screenHeight * 0.3f;
+        float yPosWPawn = screenHeight * 0.25f;
         adjustSprite(whiteKing, new Vector2(pieceScale, pieceScale), new Vector2(0, 0), new Vector2(xPosWPawn, yPosWPawn));
 
         float xPosBPawn = screenWidth * 0.6f - imgPiece.getWidth() * pieceScale * 0.5f;
-        float yPosBPawn = screenHeight * 0.3f;
+        float yPosBPawn = screenHeight * 0.25f;
         adjustSprite(blackKing, new Vector2(pieceScale, pieceScale), new Vector2(0, 0), new Vector2(xPosBPawn, yPosBPawn));
     }
 }
