@@ -14,11 +14,14 @@ import controller.ChessBoardController;
 import interfaces.AbstractBoardFactory;
 import interfaces.AbstractPieceFactory;
 import main.R;
+import model.factories.boards.BlueBoard;
 import model.factories.boards.FillFactory;
+import model.factories.boards.GreenFactory;
 import model.factories.boards.RedFactory;
 import model.factories.boards.WoodFactory;
 import model.factories.boards.YellowFactory;
 import model.factories.pieces.ClassicFillFactory;
+import model.factories.pieces.ClassicRedFactory;
 import model.factories.pieces.ClassicWoodFactory;
 import model.factories.pieces.ClassicStoneFactory;
 import sheep.game.Game;
@@ -246,11 +249,14 @@ public class SettingState extends State {
         pieceFactories.add(new ClassicFillFactory());
         pieceFactories.add(new ClassicWoodFactory());
         pieceFactories.add(new ClassicStoneFactory());
+        pieceFactories.add(new ClassicRedFactory());
 
         // Adding board factories
-        boardFactories.add(new FillFactory());
         boardFactories.add(new WoodFactory());
+        boardFactories.add(new FillFactory());
         boardFactories.add(new RedFactory());
+        boardFactories.add(new BlueBoard());
+        boardFactories.add(new GreenFactory());
         boardFactories.add(new YellowFactory());
 
         // Getting the right index
