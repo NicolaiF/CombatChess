@@ -37,6 +37,14 @@ public class MainActivity extends Activity {
         game.pushState(menuState);
     }
 
+    @Override
+    public void onPause(){
+        super.onPause();
+        while (game.getPreviousState() != null){
+            game.popState();
+        }
+    }
+
     /**
      * Directs the user to the main menu if playing a game
      * If pressed back in the menu, pause the app
@@ -49,14 +57,6 @@ public class MainActivity extends Activity {
         game.popState();
         if(game.getPreviousState() == null){
             super.onBackPressed();
-        }
-    }
-
-    @Override
-    public void onPause(){
-        super.onPause();
-        while (game.getPreviousState() != null){
-            game.popState();
         }
     }
 }

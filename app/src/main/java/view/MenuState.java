@@ -28,7 +28,7 @@ public class MenuState extends State {
     private ImageButton buttonNewGame;
     private ImageButton buttonContinueGame;
 
-    public MenuState(Game game){
+    public MenuState(Game game) {
         setGame(game);
 
         // Getting size of the screen
@@ -41,28 +41,34 @@ public class MenuState extends State {
         createButtons();
     }
 
-    private void createSprites() {
+    @Override
+    public void draw(Canvas canvas) {
+        background.update(0);
+        background.draw(canvas);
+        buttonNewGame.draw(canvas);
 
-        // Getting the images for the sprites
-        Image backgroundImage = new Image(R.drawable.background_1);
+        // Drawing continue game button if there exist a game to be continued
+        if (savedGameState != null) {
+            buttonContinueGame.draw(canvas);
+        }
 
-        // Getting the sprites
-        background = new Sprite(backgroundImage);
-
-        // Calculating the scales
-        float bgScale = screenWidth/backgroundImage.getWidth();
-
-        // Adjusting the background
-        adjustSprite(background, new Vector2(bgScale, bgScale), new Vector2(0,0), new Vector2(0,0));
     }
 
-    /** Adjust the sprite
-     * @param sprite the sprite to be adjusted
-     * @param scale the scale for this sprite
-     * @param offset the offset for this sprite
+    @Override
+    public boolean onTouchDown(MotionEvent motionEvent) {
+        buttonContainer.onTouchDown(motionEvent);
+        return true;
+    }
+
+    /**
+     * Adjust the sprite
+     *
+     * @param sprite   the sprite to be adjusted
+     * @param scale    the scale for this sprite
+     * @param offset   the offset for this sprite
      * @param position the position for this sprite
      */
-    private void adjustSprite(Sprite sprite, Vector2 scale, Vector2 offset, Vector2 position){
+    private void adjustSprite(Sprite sprite, Vector2 scale, Vector2 offset, Vector2 position) {
         sprite.setScale(scale);
         sprite.setOffset(offset);
         sprite.setPosition(position);
@@ -88,12 +94,12 @@ public class MenuState extends State {
         Image imageNewGame = new Image(R.drawable.button_newgame);
         Image imageContinueGame = new Image(R.drawable.button_continue);
 
-        buttonNewGame = new ImageButton(imageNewGame, 0, topMargin*15/10, screenWidth/(imageNewGame.getWidth()*15/10)){
+        buttonNewGame = new ImageButton(imageNewGame, 0, topMargin * 15 / 10, screenWidth / (imageNewGame.getWidth() * 15 / 10)) {
             @Override
-            public boolean onTouchDown(MotionEvent motionEvent){
-                if(getBoundingBox().contains(motionEvent.getX(), motionEvent.getY())){
+            public boolean onTouchDown(MotionEvent motionEvent) {
+                if (getBoundingBox().contains(motionEvent.getX(), motionEvent.getY())) {
                     ChessBoardController controller = new ChessBoardController(new Board());
-                    savedGameState = new GameState(getGame(),controller);
+                    savedGameState = new GameState(getGame(), controller);
                     getGame().pushState(new SetupState(controller, savedGameState));
                     return true;
                 } else {
@@ -102,11 +108,11 @@ public class MenuState extends State {
             }
 
             @Override
-            public boolean onTouchUp(MotionEvent motionEvent){
+            public boolean onTouchUp(MotionEvent motionEvent) {
                 return true;
             }
         };
-        buttonContinueGame = new ImageButton(imageContinueGame, 0, buttonNewGame.getY() + buttonNewGame.getHeight() + 20, screenWidth/(imageContinueGame.getWidth()*15/10)){
+        buttonContinueGame = new ImageButton(imageContinueGame, 0, buttonNewGame.getY() + buttonNewGame.getHeight() + 20, screenWidth / (imageContinueGame.getWidth() * 15 / 10)) {
 
             @Override
             public boolean onTouchDown(MotionEvent motionEvent) {
@@ -124,22 +130,18 @@ public class MenuState extends State {
         buttonContainer.addWidget(buttonContinueGame);
     }
 
-    @Override
-    public boolean onTouchDown(MotionEvent motionEvent){
-        buttonContainer.onTouchDown(motionEvent);
-        return true;
-    }
+    private void createSprites() {
 
-    @Override
-    public void draw(Canvas canvas){
-        background.update(0);
-        background.draw(canvas);
-        buttonNewGame.draw(canvas);
+        // Getting the images for the sprites
+        Image backgroundImage = new Image(R.drawable.background_1);
 
-        // Drawing continue game button if there exist a game to be continued
-        if(savedGameState != null){
-            buttonContinueGame.draw(canvas);
-        }
+        // Getting the sprites
+        background = new Sprite(backgroundImage);
 
+        // Calculating the scales
+        float bgScale = screenWidth / backgroundImage.getWidth();
+
+        // Adjusting the background
+        adjustSprite(background, new Vector2(bgScale, bgScale), new Vector2(0, 0), new Vector2(0, 0));
     }
 }

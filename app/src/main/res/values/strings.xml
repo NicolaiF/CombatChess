@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">CombatChess</string>
+    <string name="app_name">Combat Chess</string>
     <string name="newGame">New game</string>
     <string name="continueGame">Continue game</string>
 </resources>

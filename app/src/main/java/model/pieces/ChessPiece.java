@@ -24,7 +24,10 @@ public abstract class ChessPiece implements Piece {
         this.isWhite = isWhite;
     }
 
-    public void killed(){ isAlive = false; }
+    @Override
+    public String getType() {
+        return type;
+    }
 
     @Override
     public Sprite getSprite() {
@@ -43,11 +46,6 @@ public abstract class ChessPiece implements Piece {
     public abstract ArrayList<Move> getCaptureMoves();
 
     @Override
-    public String getType() {
-        return type;
-    }
-
-    @Override
     public boolean isAlive() {
         return isAlive;
     }
@@ -56,12 +54,14 @@ public abstract class ChessPiece implements Piece {
     public void setSprite(Sprite sprite) {this.sprite = sprite;}
 
     @Override
+    public void moved() {
+
+    }
+
+    @Override
     public String toString(){
         return type;
     }
 
-    @Override
-    public void moved() {
-
-    }
+    public void killed(){ isAlive = false; }
 }

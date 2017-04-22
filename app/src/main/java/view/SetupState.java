@@ -94,6 +94,7 @@ public class SetupState extends State {
             @Override
             public boolean onTouchDown(MotionEvent motionEvent) {
                 if (getBoundingBox().contains(motionEvent.getX(), motionEvent.getY())) {
+                    gameState.updateTimer();
                     getGame().popState();
                     getGame().pushState(gameState);
                     return true;
