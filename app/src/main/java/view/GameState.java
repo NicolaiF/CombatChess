@@ -56,9 +56,6 @@ public class GameState extends State {
     private TextButton txtWhiteTime;
     private TextButton txtBlackTime;
 
-    private ArrayList<ChessPiece> whiteCaptures = new ArrayList<>();
-    private ArrayList<ChessPiece> blackCaptures = new ArrayList<>();
-
 
     public GameState(Game game, ChessBoardController controller) {
 
@@ -89,7 +86,6 @@ public class GameState extends State {
         table.draw(canvas);
         controller.getBoardSprite().draw(canvas);
         drawSprites(canvas);
-        drawCapturedPieces(canvas);
 
         // Drawing buttons
         buttonContainer.draw(canvas);
@@ -268,16 +264,6 @@ public class GameState extends State {
             yPos = table.getY() + tableHeight;
         }
         txtWhiteTime = new TextButton(screenWidth / 2 - paint.measureText("0:00") / 2, yPos, "", new Paint[]{font, font});
-    }
-
-    private synchronized void drawCapturedPieces(Canvas canvas) {
-        for (ChessPiece piece : blackCaptures) {
-            piece.getSprite().draw(canvas);
-        }
-
-        for (ChessPiece piece : whiteCaptures) {
-            piece.getSprite().draw(canvas);
-        }
     }
 
     private void drawSprites(Canvas canvas) {
