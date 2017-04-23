@@ -17,9 +17,9 @@ public class ClassicStoneFactory extends PieceFactory {
 	@Override
 	public Sprite createRookSprite(boolean isWhite) {
 		if (isWhite) {
-			return new Sprite(new Image(R.drawable.classic_stone_white_pawn));
+			return new Sprite(new Image(R.drawable.classic_stone_white_rook));
 		} else {
-			return new Sprite(new Image(R.drawable.classic_stone_black_pawn));
+			return new Sprite(new Image(R.drawable.classic_stone_black_rook));
 		}
 	}
 
