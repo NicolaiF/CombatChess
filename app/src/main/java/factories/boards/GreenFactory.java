@@ -1,4 +1,4 @@
-package model.factories.boards;
+package factories.boards;
 
 import interfaces.AbstractBoardFactory;
 import main.R;

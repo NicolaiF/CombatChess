@@ -1,18 +1,18 @@
-package model.factories.boards;
+package factories.boards;
 
 import interfaces.AbstractBoardFactory;
 import main.R;
 import sheep.game.Sprite;
 import sheep.graphics.Image;
 
-public class RedFactory implements AbstractBoardFactory {
+public class BlueBoard implements AbstractBoardFactory {
 	@Override
 	public Sprite createBoardSprite() {
-		return new Sprite(new Image(R.drawable.red_board));
+		return new Sprite(new Image(R.drawable.blue_board));
 	}
 
 	@Override
 	public Image getSampleImage() {
-		return new Image(R.drawable.red_board);
+		return new Image(R.drawable.blue_board);
 	}
 }

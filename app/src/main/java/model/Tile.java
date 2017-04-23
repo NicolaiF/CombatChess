@@ -9,17 +9,11 @@ import sheep.graphics.Image;
 
 public class Tile {
 
-    private String color;
     private ChessPiece chessPiece;
     private PowerUp powerUp;
     private boolean highlighted;
     private Sprite highlightSprite;
 
-    /**
-     * Creates a new Tile on the chess board
-     *
-     * @param color The color for this tile
-     */
     public Tile() {
         highlightSprite = new Sprite(new Image(R.drawable.highlight_babyblue));
     }
@@ -29,11 +23,7 @@ public class Tile {
         if (chessPiece != null) {
             return chessPiece.toString();
         }
-        return color;
-    }
-
-    public String getColor() {
-        return color;
+        return "";
     }
 
     public Sprite getHighlightSprite() {

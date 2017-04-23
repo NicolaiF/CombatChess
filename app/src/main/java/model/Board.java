@@ -3,9 +3,8 @@ package model;
 import android.util.Log;
 
 import interfaces.*;
-import model.factories.boards.FillFactory;
-import model.factories.boards.WoodFactory;
-import model.factories.pieces.ClassicFillFactory;
+import factories.boards.WoodFactory;
+import factories.pieces.ClassicFillFactory;
 import model.pieces.Bishop;
 import model.pieces.ChessPiece;
 import model.pieces.King;
@@ -15,7 +14,6 @@ import model.pieces.Queen;
 import model.pieces.Rook;
 import model.powerups.Upgrade;
 import sheep.game.Sprite;
-import view.Constants;
 
 import java.util.ArrayList;
 import java.util.HashMap;

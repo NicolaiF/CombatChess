@@ -1,4 +1,4 @@
-package model.factories.pieces;
+package factories.pieces;
 
 import interfaces.AbstractPieceFactory;
 import interfaces.Piece;

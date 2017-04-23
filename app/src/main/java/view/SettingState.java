@@ -1,12 +1,8 @@
 package view;
 
-import android.content.Context;
 import android.graphics.Canvas;
-import android.graphics.Point;
 import android.util.Log;
-import android.view.Display;
 import android.view.MotionEvent;
-import android.view.WindowManager;
 
 import java.util.ArrayList;
 
@@ -14,16 +10,16 @@ import controller.ChessBoardController;
 import interfaces.AbstractBoardFactory;
 import interfaces.AbstractPieceFactory;
 import main.R;
-import model.factories.boards.BlueBoard;
-import model.factories.boards.FillFactory;
-import model.factories.boards.GreenFactory;
-import model.factories.boards.RedFactory;
-import model.factories.boards.WoodFactory;
-import model.factories.boards.YellowFactory;
-import model.factories.pieces.ClassicFillFactory;
-import model.factories.pieces.ClassicRedFactory;
-import model.factories.pieces.ClassicWoodFactory;
-import model.factories.pieces.ClassicStoneFactory;
+import factories.boards.BlueBoard;
+import factories.boards.FillFactory;
+import factories.boards.GreenFactory;
+import factories.boards.RedFactory;
+import factories.boards.WoodFactory;
+import factories.boards.YellowFactory;
+import factories.pieces.ClassicFillFactory;
+import factories.pieces.ClassicRedFactory;
+import factories.pieces.ClassicWoodFactory;
+import factories.pieces.ClassicStoneFactory;
 import sheep.game.Game;
 import sheep.game.Sprite;
 import sheep.game.State;
