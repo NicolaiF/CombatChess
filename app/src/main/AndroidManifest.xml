@@ -2,9 +2,13 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           package="main">
 
+    //android:icon="@mipmap/ic_launcher"
+    //android:roundIcon="@mipmap/ic_round_launcher"
+
+
     <application
             android:allowBackup="true"
-            android:icon="@mipmap/ic_launcher"
+            android:icon="@mipmap/ic_round_launcher"
             android:label="@string/app_name"
             android:largeHeap="true"
             android:supportsRtl="true"
