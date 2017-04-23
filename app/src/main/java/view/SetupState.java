@@ -1,7 +1,6 @@
 package view;
 
 import android.graphics.Canvas;
-import android.graphics.Matrix;
 import android.view.MotionEvent;
 
 import controller.ChessBoardController;

@@ -1,22 +1,12 @@
 package main;
 
 import android.app.Activity;
-import android.content.Intent;
-import android.graphics.PixelFormat;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.Menu;
 import android.view.Window;
 
-import java.util.EmptyStackException;
-
-import controller.ChessBoardController;
-import model.Board;
 import sheep.game.Game;
-import sheep.game.State;
 import view.GameState;
 import view.MenuState;
-import view.SettingState;
 
 public class MainActivity extends Activity {
     private Game game;
