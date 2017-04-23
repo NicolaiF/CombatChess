@@ -11,7 +11,6 @@ public interface Piece {
     boolean isWhite();
     ArrayList<Move> getLegalMoves();
     ArrayList<Move> getCaptureMoves();
-    boolean isAlive();
     void setSprite(Sprite sprite);
     void moved();
 }

@@ -9,7 +9,6 @@ import java.util.ArrayList;
 public abstract class ChessPiece implements Piece {
 
     private Sprite sprite;
-    private boolean isAlive = true;
     private boolean isWhite;
     private String type;
 
@@ -46,11 +45,6 @@ public abstract class ChessPiece implements Piece {
     public abstract ArrayList<Move> getCaptureMoves();
 
     @Override
-    public boolean isAlive() {
-        return isAlive;
-    }
-
-    @Override
     public void setSprite(Sprite sprite) {this.sprite = sprite;}
 
     @Override
@@ -62,6 +56,4 @@ public abstract class ChessPiece implements Piece {
     public String toString(){
         return type;
     }
-
-    public void killed(){ isAlive = false; }
 }

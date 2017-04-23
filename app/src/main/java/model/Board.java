@@ -109,6 +109,10 @@ public class Board {
         return legalMoves;
     }
 
+    public ChessPiece getPiece(int row, int column){
+        return getTile(row, column).getPiece();
+    }
+
     public AbstractPieceFactory getPieceFactory() {
         return pieceFactory;
     }
@@ -770,6 +774,17 @@ public class Board {
     }
 
     /**
+     * Removes the power up in this tile and returns the power up that was removed
+     *
+     * @param row    vertical index
+     * @param column horizontal index
+     * @return the piece that was removed
+     */
+    private PowerUp removePowerUp(int row, int column) {
+        return getTile(row, column).removePowerUp();
+    }
+
+    /**
      * sets passantable to false on pawns
      *
      * @param isWhite decides if white or black shall be reset
@@ -789,19 +804,6 @@ public class Board {
                 }
             }
         }
-    }
-
-
-
-    /**
-     * Removes the power up in this tile and returns the power up that was removed
-     *
-     * @param row    vertical index
-     * @param column horizontal index
-     * @return the piece that was removed
-     */
-    private PowerUp removePowerUp(int row, int column) {
-        return getTile(row, column).removePowerUp();
     }
 
     /**

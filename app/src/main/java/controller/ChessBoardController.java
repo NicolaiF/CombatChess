@@ -84,7 +84,7 @@ public class ChessBoardController {
      * @return chess piece in this location
      */
     public ChessPiece getPiece(int row, int column) {
-        return board.getTile(row, column).getPiece();
+        return board.getPiece(row, column);
     }
 
     public AbstractPieceFactory getPieceFactory() {
